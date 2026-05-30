@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <rect width="1200" height="800" fill="#0A0A0A"/>
+  <defs>
+    <pattern id="g3" width="32" height="32" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="0.6" fill="#1A1A1A"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="800" fill="url(#g3)"/>
+
+  <!-- Dashboard container -->
+  <rect x="60" y="100" width="1080" height="600" fill="#111111" stroke="#2A2A2A" stroke-width="1" rx="6"/>
+  <!-- Top bar -->
+  <rect x="60" y="100" width="1080" height="44" fill="#1A1A1A" rx="6"/>
+  <circle cx="88" cy="122" r="5" fill="#3A3A3A"/>
+  <circle cx="106" cy="122" r="5" fill="#3A3A3A"/>
+  <circle cx="124" cy="122" r="5" fill="#3A3A3A"/>
+  <text x="200" y="128" font-family="'Courier New', monospace" font-size="13" fill="#00E5FF">/oli</text>
+  <text x="240" y="128" font-family="'Courier New', monospace" font-size="13" fill="#555555"> — control center</text>
+  <!-- Status dot -->
+  <circle cx="1110" cy="122" r="5" fill="#00FF87"/>
+  <text x="1080" y="128" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#00FF87" text-anchor="end">LIVE</text>
+
+  <!-- KPI Cards Row -->
+  <!-- Card 1 -->
+  <rect x="80" y="164" width="240" height="100" fill="#1A1A1A" stroke="#2A2A2A" stroke-width="1" rx="4"/>
+  <text x="100" y="190" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555555" letter-spacing="2">TASKS EXECUTED</text>
+  <text x="100" y="230" font-family="'Helvetica Neue', Arial, sans-serif" font-size="36" font-weight="700" fill="#00E5FF">2,847</text>
+  <text x="100" y="254" font-family="'Helvetica Neue', Arial, sans-serif" font-size="12" fill="#00FF87">↑ 18% this week</text>
+  <!-- Card 2 -->
+  <rect x="340" y="164" width="240" height="100" fill="#1A1A1A" stroke="#2A2A2A" stroke-width="1" rx="4"/>
+  <text x="360" y="190" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555555" letter-spacing="2">TIME SAVED</text>
+  <text x="360" y="230" font-family="'Helvetica Neue', Arial, sans-serif" font-size="36" font-weight="700" fill="#E8E8E8">94h</text>
+  <text x="360" y="254" font-family="'Helvetica Neue', Arial, sans-serif" font-size="12" fill="#9A9A9A">vs manual baseline</text>
+  <!-- Card 3 -->
+  <rect x="600" y="164" width="240" height="100" fill="#1A1A1A" stroke="#2A2A2A" stroke-width="1" rx="4"/>
+  <text x="620" y="190" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555555" letter-spacing="2">TOOLS CONNECTED</text>
+  <text x="620" y="230" font-family="'Helvetica Neue', Arial, sans-serif" font-size="36" font-weight="700" fill="#E8E8E8">23</text>
+  <text x="620" y="254" font-family="'Helvetica Neue', Arial, sans-serif" font-size="12" fill="#9A9A9A">active integrations</text>
+  <!-- Card 4 -->
+  <rect x="860" y="164" width="260" height="100" fill="#1A1A1A" stroke="#2A2A2A" stroke-width="1" rx="4"/>
+  <text x="880" y="190" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555555" letter-spacing="2">SUCCESS RATE</text>
+  <text x="880" y="230" font-family="'Helvetica Neue', Arial, sans-serif" font-size="36" font-weight="700" fill="#00FF87">99.4%</text>
+  <text x="880" y="254" font-family="'Helvetica Neue', Arial, sans-serif" font-size="12" fill="#9A9A9A">last 30 days</text>
+
+  <!-- Line chart: execution volume over time -->
+  <rect x="80" y="284" width="680" height="220" fill="#161616" stroke="#2A2A2A" stroke-width="1" rx="4"/>
+  <text x="100" y="308" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555555" letter-spacing="2">EXECUTION VOLUME — 7D</text>
+  <!-- Chart lines -->
+  <polyline points="100,450 180,420 260,400 340,380 420,350 500,310 580,280 660,270 720,250" stroke="#00E5FF" stroke-width="2" fill="none"/>
+  <!-- Fill area -->
+  <polygon points="100,450 180,420 260,400 340,380 420,350 500,310 580,280 660,270 720,250 720,490 100,490" fill="#00E5FF" opacity="0.05"/>
+  <!-- Data points -->
+  <circle cx="100" cy="450" r="3" fill="#00E5FF"/>
+  <circle cx="180" cy="420" r="3" fill="#00E5FF"/>
+  <circle cx="260" cy="400" r="3" fill="#00E5FF"/>
+  <circle cx="340" cy="380" r="3" fill="#00E5FF"/>
+  <circle cx="420" cy="350" r="3" fill="#00E5FF"/>
+  <circle cx="500" cy="310" r="3" fill="#00E5FF"/>
+  <circle cx="580" cy="280" r="3" fill="#00E5FF"/>
+  <circle cx="660" cy="270" r="3" fill="#00E5FF"/>
+  <!-- Y axis labels -->
+  <text x="90" y="454" font-family="'Courier New', monospace" font-size="10" fill="#3A3A3A" text-anchor="end">0</text>
+  <text x="90" y="390" font-family="'Courier New', monospace" font-size="10" fill="#3A3A3A" text-anchor="end">500</text>
+  <text x="90" y="330" font-family="'Courier New', monospace" font-size="10" fill="#3A3A3A" text-anchor="end">1k</text>
+
+  <!-- Right panel: recent activity -->
+  <rect x="780" y="284" width="340" height="220" fill="#161616" stroke="#2A2A2A" stroke-width="1" rx="4"/>
+  <text x="800" y="308" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555555" letter-spacing="2">RECENT ACTIVITY</text>
+  <!-- Activity rows -->
+  <circle cx="800" cy="334" r="4" fill="#00FF87"/>
+  <text x="818" y="338" font-family="'Courier New', monospace" font-size="12" fill="#E8E8E8">deploy production</text>
+  <text x="1090" y="338" font-family="'Courier New', monospace" font-size="10" fill="#555555" text-anchor="end">2m</text>
+  <line x1="800" y1="350" x2="1100" y2="350" stroke="#2A2A2A" stroke-width="0.5"/>
+
+  <circle cx="800" cy="368" r="4" fill="#00FF87"/>
+  <text x="818" y="372" font-family="'Courier New', monospace" font-size="12" fill="#E8E8E8">run smoke tests</text>
+  <text x="1090" y="372" font-family="'Courier New', monospace" font-size="10" fill="#555555" text-anchor="end">5m</text>
+  <line x1="800" y1="384" x2="1100" y2="384" stroke="#2A2A2A" stroke-width="0.5"/>
+
+  <circle cx="800" cy="402" r="4" fill="#9A9A9A"/>
+  <text x="818" y="406" font-family="'Courier New', monospace" font-size="12" fill="#9A9A9A">slack digest</text>
+  <text x="1090" y="406" font-family="'Courier New', monospace" font-size="10" fill="#555555" text-anchor="end">12m</text>
+  <line x1="800" y1="418" x2="1100" y2="418" stroke="#2A2A2A" stroke-width="0.5"/>
+
+  <circle cx="800" cy="436" r="4" fill="#9A9A9A"/>
+  <text x="818" y="440" font-family="'Courier New', monospace" font-size="12" fill="#9A9A9A">clean /tmp</text>
+  <text x="1090" y="440" font-family="'Courier New', monospace" font-size="10" fill="#555555" text-anchor="end">18m</text>
+  <line x1="800" y1="452" x2="1100" y2="452" stroke="#2A2A2A" stroke-width="0.5"/>
+
+  <circle cx="800" cy="470" r="4" fill="#00FF87"/>
+  <text x="818" y="474" font-family="'Courier New', monospace" font-size="12" fill="#E8E8E8">generate report</text>
+  <text x="1090" y="474" font-family="'Courier New', monospace" font-size="10" fill="#555555" text-anchor="end">24m</text>
+
+  <!-- Command input bar at bottom -->
+  <rect x="80" y="524" width="1040" height="52" fill="#161616" stroke="#00E5FF" stroke-width="1" rx="4"/>
+  <text x="100" y="556" font-family="'Courier New', monospace" font-size="14" fill="#00E5FF">/</text>
+  <text x="116" y="556" font-family="'Courier New', monospace" font-size="14" fill="#555555">Type a command or describe what you want to do...</text>
+  <rect x="1092" y="535" width="16" height="24" fill="#00E5FF" opacity="0.7" rx="2"/>
+
+  <!-- Headline -->
+  <text x="600" y="740" font-family="'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="-1">Radical efficiency. Measured.</text>
+</svg>

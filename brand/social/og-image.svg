@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0A0A0A"/>
+      <stop offset="100%" style="stop-color:#111111"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Grid texture -->
+  <defs>
+    <pattern id="dotgrid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#1A1A1A"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#dotgrid)"/>
+
+  <!-- Large slash background element -->
+  <polygon points="800,580 920,50 980,50 860,580" fill="#00E5FF" opacity="0.04"/>
+
+  <!-- Logo mark left -->
+  <circle cx="120" cy="80" r="40" stroke="#E8E8E8" stroke-width="1.5" fill="none"/>
+  <line x1="104" y1="110" x2="136" y2="50" stroke="#00E5FF" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- /oli wordmark -->
+  <text x="180" y="97" font-family="'Helvetica Neue', Arial, sans-serif" font-size="36" font-weight="700" fill="#00E5FF">/</text>
+  <text x="202" y="97" font-family="'Helvetica Neue', Arial, sans-serif" font-size="36" font-weight="700" fill="#E8E8E8">oli</text>
+
+  <!-- Main headline -->
+  <text x="100" y="320" font-family="'Helvetica Neue', Arial, sans-serif" font-size="88" font-weight="700" fill="#FFFFFF" letter-spacing="-3">Execute.</text>
+  <text x="100" y="420" font-family="'Helvetica Neue', Arial, sans-serif" font-size="88" font-weight="300" fill="#9A9A9A" letter-spacing="-2">Don't just chat.</text>
+
+  <!-- Subtext -->
+  <text x="100" y="520" font-family="'Helvetica Neue', Arial, sans-serif" font-size="28" font-weight="400" fill="#3A3A3A">The AI operator that runs your computer.</text>
+
+  <!-- Cyan accent line -->
+  <rect x="100" y="540" width="120" height="2" fill="#00E5FF"/>
+</svg>

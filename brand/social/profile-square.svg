@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <rect width="400" height="400" fill="#0A0A0A"/>
+  <!-- Route E: Circle mark + slash, premium for profile -->
+  <circle cx="200" cy="200" r="160" stroke="#2A2A2A" stroke-width="1" fill="none"/>
+  <circle cx="200" cy="200" r="140" stroke="#E8E8E8" stroke-width="1.5" fill="none"/>
+  <!-- Slash inside circle -->
+  <line x1="155" y1="300" x2="245" y2="100" stroke="#00E5FF" stroke-width="8" stroke-linecap="round"/>
+  <!-- "/oli" text at bottom -->
+  <text x="200" y="360" font-family="'Helvetica Neue', Arial, sans-serif" font-size="28" font-weight="300" fill="#9A9A9A" text-anchor="middle" letter-spacing="2">/oli</text>
+</svg>

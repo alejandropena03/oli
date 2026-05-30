@@ -1,0 +1,73 @@
+/* /oli Brand System — Typography Tokens
+   ---------------------------------------- */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  /* Font Families */
+  --font-display: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono:    'JetBrains Mono', 'Courier New', monospace;
+  --font-body:    'Inter', 'Helvetica Neue', Arial, sans-serif;
+
+  /* Font Weights */
+  --fw-light:     300;
+  --fw-regular:   400;
+  --fw-medium:    500;
+  --fw-semibold:  600;
+  --fw-bold:      700;
+
+  /* Type Scale — modular ratio 1.25 */
+  --text-xs:   0.64rem;   /* 10.24px */
+  --text-sm:   0.8rem;    /* 12.8px  */
+  --text-base: 1rem;      /* 16px    */
+  --text-md:   1.25rem;   /* 20px    */
+  --text-lg:   1.563rem;  /* 25px    */
+  --text-xl:   1.953rem;  /* 31px    */
+  --text-2xl:  2.441rem;  /* 39px    */
+  --text-3xl:  3.052rem;  /* 49px    */
+  --text-4xl:  3.815rem;  /* 61px    */
+  --text-5xl:  4.768rem;  /* 76px    */
+  --text-6xl:  5.96rem;   /* 95px    */
+
+  /* Line Heights */
+  --lh-tight:  1.1;
+  --lh-snug:   1.2;
+  --lh-normal: 1.5;
+  --lh-relaxed:1.65;
+
+  /* Letter Spacing */
+  --ls-tight:  -0.04em;
+  --ls-snug:   -0.02em;
+  --ls-normal:  0;
+  --ls-wide:    0.06em;
+  --ls-wider:   0.12em;
+  --ls-widest:  0.2em;
+}
+
+/* Base resets */
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-normal);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Wordmark rule: /oli always uses Space Grotesk Bold, lowercase */
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  text-transform: lowercase;
+  letter-spacing: var(--ls-tight);
+}
+
+.wordmark .slash { color: var(--color-cyan); }
+.wordmark .name  { color: var(--color-platinum); }
+
+/* Mono blocks */
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}

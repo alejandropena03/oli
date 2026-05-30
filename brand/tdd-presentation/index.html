@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>/oli — TDD</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --black: #0A0A0A;
+  --black2: #141414;
+  --black3: #1E1E1E;
+  --cyan: #00E5FF;
+  --white: #EFEFEF;
+  --dim: rgba(239,239,239,0.55);
+  --faint: rgba(239,239,239,0.08);
+  --green: #00FF94;
+  --amber: #FFB800;
+  --red: #FF4545;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* ── VIEWPORT SCALE ────────────────────────────────────── */
+#stage {
+  position: fixed;
+  top: 0; left: 0;
+  width: 1280px;
+  height: 720px;
+  transform-origin: top left;
+  background: var(--black);
+  overflow: hidden;
+}
+
+/* ── NAVIGATION ────────────────────────────────────────── */
+#nav {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  background: rgba(10,10,10,0.95);
+  border-bottom: 1px solid var(--faint);
+  z-index: 100;
+}
+
+.logo { font-size: 16px; font-weight: 700; color: var(--white); letter-spacing: -0.02em; }
+.logo span { color: var(--cyan); }
+
+.nav-right { display: flex; align-items: center; gap: 20px; }
+
+.counter {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: var(--dim);
+  letter-spacing: 0.06em;
+}
+.counter .c { color: var(--cyan); }
+
+.dots { display: flex; gap: 5px; }
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--faint);
+  border: none; cursor: pointer;
+  transition: all 0.3s;
+  padding: 0;
+}
+.dot.active { background: var(--cyan); width: 18px; border-radius: 3px; }
+.dot:hover:not(.active) { background: var(--dim); }
+
+/* ── SLIDES ────────────────────────────────────────────── */
+#slides {
+  position: absolute;
+  top: 56px; left: 0; right: 0; bottom: 48px;
+  overflow: hidden;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  padding: 56px 64px 48px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.slide.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── FOOTER ────────────────────────────────────────────── */
+#footer {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 32px;
+  gap: 10px;
+  border-top: 1px solid var(--faint);
+}
+
+.btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--faint);
+  background: transparent;
+  color: var(--dim);
+  cursor: pointer;
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.btn:hover { border-color: var(--cyan); color: var(--cyan); }
+.btn:disabled { opacity: 0.2; pointer-events: none; }
+
+#progressbar {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 2px;
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan);
+  transition: width 0.4s ease;
+}
+
+/* ── TYPOGRAPHY ────────────────────────────────────────── */
+.label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--cyan);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: var(--white);
+  margin-bottom: 28px;
+}
+
+.title-md {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--white);
+  margin-bottom: 20px;
+}
+
+.title-sm {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+
+.body {
+  font-size: 20px;
+  line-height: 1.55;
+  color: var(--dim);
+}
+
+.body-sm {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--dim);
+}
+
+.body-xs {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--dim);
+}
+
+.cy { color: var(--cyan); }
+.wh { color: var(--white); }
+.gr { color: var(--green); }
+.am { color: var(--amber); }
+.rd { color: var(--red); }
+.mo { font-family: 'Space Mono', monospace; }
+
+/* ── LAYOUT ────────────────────────────────────────────── */
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+.two-wide { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: start; }
+.three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+.four { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+
+/* ── CARDS ──────────────────────────────────────────────── */
+.card {
+  background: var(--black2);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.card-cyan {
+  background: rgba(0,229,255,0.07);
+  border-color: rgba(0,229,255,0.25);
+}
+
+.card-green {
+  background: rgba(0,255,148,0.06);
+  border-color: rgba(0,255,148,0.2);
+}
+
+.card-amber {
+  background: rgba(255,184,0,0.06);
+  border-color: rgba(255,184,0,0.2);
+}
+
+.card-red {
+  background: rgba(255,69,69,0.06);
+  border-color: rgba(255,69,69,0.2);
+}
+
+.card-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--cyan);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* ── PILLS ──────────────────────────────────────────────── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.pill-cy { color: var(--cyan); border-color: rgba(0,229,255,0.3); background: rgba(0,229,255,0.08); }
+.pill-gr { color: var(--green); border-color: rgba(0,255,148,0.3); background: rgba(0,255,148,0.07); }
+.pill-am { color: var(--amber); border-color: rgba(255,184,0,0.3); background: rgba(255,184,0,0.07); }
+.pill-rd { color: var(--red); border-color: rgba(255,69,69,0.3); background: rgba(255,69,69,0.07); }
+.pill-d { color: var(--dim); border-color: rgba(239,239,239,0.15); }
+
+/* ── FLOW ───────────────────────────────────────────────── */
+.flow { display: flex; align-items: center; gap: 0; flex-wrap: nowrap; }
+.fbox {
+  padding: 8px 16px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--black3);
+  white-space: nowrap;
+}
+.fbox-cy { border-color: rgba(0,229,255,0.35); background: rgba(0,229,255,0.09); color: var(--cyan); }
+.fbox-gr { border-color: rgba(0,255,148,0.35); background: rgba(0,255,148,0.07); color: var(--green); }
+.fbox-am { border-color: rgba(255,184,0,0.35); background: rgba(255,184,0,0.07); color: var(--amber); }
+.farrow { color: rgba(255,255,255,0.2); padding: 0 8px; font-size: 16px; }
+
+/* ── STEP LIST ──────────────────────────────────────────── */
+.step { display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--faint); align-items: flex-start; }
+.step:last-child { border: none; }
+.step-num {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.3);
+  color: var(--cyan); font-family: 'Space Mono', monospace; font-size: 11px;
+  display: flex; align-items: center; justify-content: center; margin-top: 1px;
+}
+.step-title { font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+.step-desc { font-size: 13px; color: var(--dim); line-height: 1.5; }
+
+/* ── STAT ───────────────────────────────────────────────── */
+.stat { background: var(--black2); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 20px; text-align: center; }
+.stat-n { font-size: 40px; font-weight: 700; letter-spacing: -0.04em; color: var(--cyan); line-height: 1; }
+.stat-l { font-size: 13px; color: var(--dim); margin-top: 6px; line-height: 1.4; }
+
+/* ── PERM ROW ───────────────────────────────────────────── */
+.prow { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-bottom: 1px solid var(--faint); }
+.prow:last-child { border: none; }
+.pnum {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700;
+}
+.pname { font-size: 15px; font-weight: 600; color: var(--white); min-width: 180px; }
+.pdesc { font-size: 13px; color: var(--dim); flex: 1; }
+
+/* ── TIMELINE ───────────────────────────────────────────── */
+.timeline { display: flex; position: relative; padding-top: 40px; }
+.timeline::before {
+  content: '';
+  position: absolute; top: 16px; left: 0; right: 0; height: 1px;
+  background: linear-gradient(to right, var(--cyan), rgba(0,229,255,0.1));
+}
+.titem { flex: 1; padding-right: 16px; position: relative; }
+.tdot {
+  position: absolute; top: 8px; left: 0;
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid var(--cyan); background: var(--black);
+  transform: translateY(-50%);
+}
+.tdot.now { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+.ttag { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--cyan); font-weight: 700; margin-bottom: 6px; }
+.ttitle { font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+.tdesc { font-size: 12px; color: var(--dim); line-height: 1.5; }
+
+/* ── NOTIF MOCKUP ───────────────────────────────────────── */
+.notif {
+  background: var(--black2);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+}
+.notif-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.notif-icon {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(0,229,255,0.12); border: 1px solid rgba(0,229,255,0.3);
+  display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+}
+.notif-name { font-size: 15px; font-weight: 600; color: var(--white); }
+.notif-sub { font-size: 12px; color: var(--dim); }
+.notif-msg { font-size: 14px; color: var(--dim); margin-bottom: 12px; line-height: 1.5; }
+.notif-suggest {
+  background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 8px; padding: 12px; margin-bottom: 14px;
+}
+.notif-suggest-label { font-size: 10px; color: var(--cyan); font-family: 'Space Mono', monospace; letter-spacing: 0.1em; margin-bottom: 6px; text-transform: uppercase; }
+.notif-suggest-text { font-size: 14px; color: var(--white); line-height: 1.5; }
+.notif-btns { display: flex; gap: 8px; }
+.nbtn { padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; }
+.nbtn-cy { background: var(--cyan); color: var(--black); }
+.nbtn-d { background: var(--black3); color: var(--dim); }
+
+/* ── GLOW ───────────────────────────────────────────────── */
+.glow {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  filter: blur(80px);
+}
+.glow-cy { background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%); }
+
+/* ── GRID BG ────────────────────────────────────────────── */
+.gridbg {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* ── DIVIDER ────────────────────────────────────────────── */
+.divider { width: 48px; height: 2px; background: var(--cyan); margin-bottom: 24px; }
+
+/* ── CODE ───────────────────────────────────────────────── */
+.code {
+  background: var(--black2);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-left: 3px solid var(--cyan);
+  border-radius: 8px;
+  padding: 18px 20px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--dim);
+}
+.kw { color: var(--cyan); }
+.str { color: var(--green); }
+.cm { color: rgba(255,255,255,0.22); }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <div class="gridbg"></div>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <div class="logo"><span>/</span>oli — TDD</div>
+    <div class="nav-right">
+      <span class="counter"><span class="c" id="cur">01</span> / <span id="tot">20</span></span>
+      <div class="dots" id="dots"></div>
+    </div>
+  </nav>
+
+  <div id="slides">
+
+    <!-- ═══════════════════════════════════════════════════════
+         01 — COVER
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide active">
+      <div class="glow glow-cy" style="width:600px;height:600px;top:-200px;right:-200px;"></div>
+      <div style="position:relative;z-index:1;">
+        <div class="label">Technical Design Document · 2026-05-26</div>
+        <div class="title">De intención<br>a trabajo<br><span class="cy">terminado.</span></div>
+        <div class="body" style="margin-bottom: 36px; max-width: 620px;">
+          El plano completo de /oli antes de escribir una línea de código.<br>
+          14 decisiones arquitecturales. 3 casos de uso demostrados.
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <span class="pill pill-cy">14 ADRs</span>
+          <span class="pill pill-gr">5 Schemas TypeScript</span>
+          <span class="pill pill-am">3 casos de uso reales</span>
+          <span class="pill pill-d">Build V0: próximo paso</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         02 — QUÉ ES EL TDD
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Fundamentos</div>
+      <div class="title-md">El TDD es el plano.<br>El código es la construcción.</div>
+      <div class="body" style="margin-bottom:36px; max-width:680px;">
+        Un Technical Design Document define <span class="wh">qué se va a construir y por qué</span> antes de tocar el código. Si algo no está aquí, no se construye.
+      </div>
+      <div class="three">
+        <div class="card">
+          <div class="card-label">Regla 01</div>
+          <div style="font-size:17px;font-weight:600;color:var(--white);margin-bottom:8px;">Nunca borrar ADRs</div>
+          <div class="body-sm">Las decisiones de arquitectura se marcan como <span class="mo cy">deprecated</span> pero nunca desaparecen. En 6 meses, sabrás exactamente por qué algo está como está.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Regla 02</div>
+          <div style="font-size:17px;font-weight:600;color:var(--white);margin-bottom:8px;">Los schemas son contratos</div>
+          <div class="body-sm">Si cambias la forma de un dato, actualizas todos los módulos que lo usan. No hay sorpresas en producción.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Regla 03</div>
+          <div style="font-size:17px;font-weight:600;color:var(--white);margin-bottom:8px;">Prueba en papel primero</div>
+          <div class="body-sm">Cada caso de uso se describe de punta a punta antes de codificar. Si no puedes describirlo, la arquitectura está incompleta.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         03 — LA PROMESA
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">La promesa de valor</div>
+      <div class="title-md">Oli hace dos cosas.<br>Solo dos.</div>
+      <div class="two" style="margin-top:8px;">
+        <div class="card card-cyan">
+          <div class="card-label">Capacidad 01</div>
+          <div style="font-size:22px;font-weight:700;color:var(--white);margin-bottom:14px;line-height:1.2;">Hacer todo lo que un humano haría en un computador</div>
+          <div class="body-sm" style="margin-bottom:16px;">Archivos, código, web, email, bases de datos, apps de escritorio, cloud, multimedia, voz. Si tiene una interfaz digital, Oli puede usarla.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span class="pill pill-cy" style="font-size:11px;">14 categorías</span>
+            <span class="pill pill-cy" style="font-size:11px;">500+ herramientas</span>
+          </div>
+        </div>
+        <div class="card card-cyan">
+          <div class="card-label">Capacidad 02</div>
+          <div style="font-size:22px;font-weight:700;color:var(--white);margin-bottom:14px;line-height:1.2;">Orquestar el mejor cumplimiento de las misiones</div>
+          <div class="body-sm" style="margin-bottom:16px;">No solo ejecuta herramientas. Entiende la intención, planifica, valida el resultado, aprende de cada misión y convierte el trabajo repetido en sistemas automáticos.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span class="pill pill-cy" style="font-size:11px;">18 estados de misión</span>
+            <span class="pill pill-cy" style="font-size:11px;">8 trabajadores internos</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:20px;padding:16px 20px;background:var(--black2);border-left:3px solid var(--cyan);border-radius:0 8px 8px 0;">
+        <div class="body-sm"><span class="wh">La diferencia crítica:</span> sin Oli, tienes una caja de herramientas. <span class="cy">Con Oli, tienes un operador que recuerda, planifica, valida y aprende.</span></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         04 — MISSION KERNEL: QUÉ ES
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Mission Kernel</div>
+      <div class="title-md">Toda interacción importante<br>se convierte en una misión.</div>
+      <div class="body" style="margin-bottom:28px; max-width:700px;">
+        Una misión empieza con una intención y termina con un entregable validado, un reporte y un aprendizaje. Es la unidad de trabajo de Oli.
+      </div>
+      <div style="margin-bottom:28px;">
+        <div class="flow">
+          <div class="fbox">Intake</div><span class="farrow">→</span>
+          <div class="fbox fbox-cy">Entiende</div><span class="farrow">→</span>
+          <div class="fbox">Contexto</div><span class="farrow">→</span>
+          <div class="fbox">Permisos</div><span class="farrow">→</span>
+          <div class="fbox fbox-cy">Planifica</div><span class="farrow">→</span>
+          <div class="fbox">Ejecuta</div><span class="farrow">→</span>
+          <div class="fbox fbox-cy">Valida</div><span class="farrow">→</span>
+          <div class="fbox">Entrega</div><span class="farrow">→</span>
+          <div class="fbox">Reporta</div><span class="farrow">→</span>
+          <div class="fbox fbox-gr">Aprende</div>
+        </div>
+      </div>
+      <div class="three">
+        <div class="card">
+          <div class="card-label">Entiende primero</div>
+          <div class="body-sm"><span class="wh">Oli pregunta antes de asumir.</span> Máximo 2 preguntas, cada una con propósito. Si no entiende bien la intención, todo lo demás sale mal.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">3 intentos antes de pedir ayuda</div>
+          <div class="body-sm"><span class="wh">Si algo falla, Oli lo intenta solo 3 veces</span> con estrategias distintas. Solo escala al founder cuando agotó las opciones y llega con contexto completo.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">No entrega sin validar</div>
+          <div class="body-sm"><span class="wh">El resultado se verifica contra los criterios de éxito</span> definidos al inicio. Si no los cumple, repara antes de entregar. Sin outputs decorativos.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         05 — LOS 18 ESTADOS
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">La máquina de estados</div>
+      <div class="title-md">Una misión puede estar<br>en 18 estados distintos.</div>
+      <div class="two-wide" style="margin-top: 8px;">
+        <div>
+          <div class="body-sm" style="margin-bottom:20px;">Cada estado tiene una lógica clara. Solo el Mission Kernel puede cambiar el estado de una misión. Los trabajadores internos reportan resultados — no deciden estados.</div>
+          <div class="code">
+<span class="cm"># Flujo de una misión bloqueada:</span><br>
+<br>
+"Oli, publica el artículo en WordPress"<br>
+<br>
+→ <span class="kw">interpreting_intent</span><br>
+→ <span class="cm"># Oli: "¿en qué blog y con qué etiquetas?"</span><br>
+→ <span class="kw">clarifying</span>  <span class="cm"># espera respuesta</span><br>
+→ <span class="kw">planning</span><br>
+→ <span class="kw">awaiting_approval</span>  <span class="cm"># login = clase 2</span><br>
+→ <span class="kw">executing</span><br>
+→ <span class="kw">repairing</span>  <span class="cm"># intento 1: login expiró</span><br>
+→ <span class="kw">repairing</span>  <span class="cm"># intento 2: otra ruta</span><br>
+→ <span class="str">blocked</span>    <span class="cm"># agotó 3 intentos</span><br>
+→ <span class="cm"># "Re-autoriza WordPress en Settings"</span>
+          </div>
+        </div>
+        <div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div>
+              <div style="font-size:11px;color:var(--cyan);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Flujo normal</div>
+              <div style="display:flex;flex-direction:column;gap:5px;">
+                <span class="pill pill-d" style="font-size:11px;justify-content:flex-start;">idle → listening</span>
+                <span class="pill pill-d" style="font-size:11px;justify-content:flex-start;">intake_received</span>
+                <span class="pill pill-cy" style="font-size:11px;justify-content:flex-start;">interpreting_intent</span>
+                <span class="pill pill-d" style="font-size:11px;justify-content:flex-start;">retrieving_context</span>
+                <span class="pill pill-cy" style="font-size:11px;justify-content:flex-start;">planning</span>
+                <span class="pill pill-cy" style="font-size:11px;justify-content:flex-start;">executing</span>
+                <span class="pill pill-cy" style="font-size:11px;justify-content:flex-start;">validating</span>
+                <span class="pill pill-gr" style="font-size:11px;justify-content:flex-start;">completed ✓</span>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--amber);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Estados especiales</div>
+              <div style="display:flex;flex-direction:column;gap:5px;">
+                <span class="pill pill-am" style="font-size:11px;justify-content:flex-start;">clarifying</span>
+                <span class="pill pill-am" style="font-size:11px;justify-content:flex-start;">awaiting_approval</span>
+                <span class="pill pill-am" style="font-size:11px;justify-content:flex-start;">repairing</span>
+                <div style="height:6px;"></div>
+                <div style="font-size:11px;color:var(--red);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;">Terminales</div>
+                <span class="pill pill-rd" style="font-size:11px;justify-content:flex-start;">blocked</span>
+                <span class="pill pill-rd" style="font-size:11px;justify-content:flex-start;">failed · cancelled</span>
+                <span class="pill pill-d" style="font-size:11px;justify-content:flex-start;">archived (irreversible)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         06 — PERMISOS
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Modelo de permisos</div>
+      <div class="title-md">Oli actúa solo cuando<br>puede. Pregunta cuando debe.</div>
+      <div class="two" style="margin-top:12px;">
+        <div>
+          <div class="body-sm" style="margin-bottom:20px;">Cada acción tiene una clase de permiso. El plan las clasifica antes de ejecutar. El founder configura hasta qué clase Oli aprueba solo.</div>
+          <div class="prow">
+            <div class="pnum" style="background:rgba(0,229,255,.12);color:var(--cyan);">0</div>
+            <div class="pname">Read / Draft</div>
+            <div class="pdesc">Sin consecuencias externas. Auto.</div>
+            <span class="pill pill-gr" style="font-size:11px;">Automático</span>
+          </div>
+          <div class="prow">
+            <div class="pnum" style="background:rgba(0,255,148,.1);color:var(--green);">1</div>
+            <div class="pname">Reversible local</div>
+            <div class="pdesc">Acciones locales que se pueden deshacer.</div>
+            <span class="pill pill-gr" style="font-size:11px;">Automático</span>
+          </div>
+          <div class="prow">
+            <div class="pnum" style="background:rgba(255,184,0,.1);color:var(--amber);">2</div>
+            <div class="pname">Costo real</div>
+            <div class="pdesc">Genera costo de API o cómputo.</div>
+            <span class="pill pill-am" style="font-size:11px;">Pregunta 1ª vez</span>
+          </div>
+          <div class="prow">
+            <div class="pnum" style="background:rgba(255,100,0,.1);color:#FF6400;">3</div>
+            <div class="pname">Comunicación</div>
+            <div class="pdesc">Email, publicación, mensajes externos.</div>
+            <span class="pill pill-am" style="font-size:11px;">Siempre</span>
+          </div>
+          <div class="prow">
+            <div class="pnum" style="background:rgba(255,69,69,.1);color:var(--red);">4</div>
+            <div class="pname">Destructivo</div>
+            <div class="pdesc">Datos, producción, finanzas.</div>
+            <span class="pill pill-rd" style="font-size:11px;">Siempre + confirm</span>
+          </div>
+        </div>
+        <div>
+          <div class="card card-cyan">
+            <div class="card-label">Ejemplo en acción</div>
+            <div class="body-sm" style="margin-bottom:14px;color:var(--white);">"Oli, revisa mi email y responde los urgentes"</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="body-sm">Leer emails</span>
+                <span class="pill pill-gr" style="font-size:11px;">clase 0 — auto</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="body-sm">Clasificar urgentes</span>
+                <span class="pill pill-gr" style="font-size:11px;">clase 0 — auto</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="body-sm">Redactar respuestas</span>
+                <span class="pill pill-gr" style="font-size:11px;">clase 0 — auto</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:rgba(255,184,0,.06);border:1px solid rgba(255,184,0,.2);border-radius:8px;">
+                <span class="body-sm am">Enviar emails</span>
+                <span class="pill pill-am" style="font-size:11px;">clase 3 — aprobación</span>
+              </div>
+            </div>
+            <div class="body-sm" style="margin-top:14px;color:var(--dim);">Oli hace los 3 primeros pasos solo. Para el último, pide permiso con el borrador listo para aprobar.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         07 — MEMORIA
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Sistema de memoria</div>
+      <div class="title-md">Oli recuerda.<br>Las 3 capas de lo que sabe.</div>
+      <div class="three" style="margin-top:12px;">
+        <div class="card">
+          <div style="font-size:28px;margin-bottom:14px;">👤</div>
+          <div class="card-label">Capa 01 — Usuario</div>
+          <div style="font-size:17px;font-weight:600;color:var(--white);margin-bottom:12px;">Cómo trabaja el founder</div>
+          <div class="body-sm" style="margin-bottom:12px;">Preferencias de formato, tolerancia al riesgo, horarios, tipo de output que prefiere, correcciones que ha dado.</div>
+          <div class="body-sm cy" style="font-style:italic;">"El founder prefiere tablas, responde clientes en la mañana."</div>
+        </div>
+        <div class="card card-cyan">
+          <div style="font-size:28px;margin-bottom:14px;">🏢</div>
+          <div class="card-label">Capa 02 — Empresa</div>
+          <div style="font-size:17px;font-weight:600;color:var(--white);margin-bottom:12px;">Contexto del producto</div>
+          <div class="body-sm" style="margin-bottom:12px;">ICP, pricing, competidores, roadmap, decisiones importantes, tesis del producto.</div>
+          <div class="body-sm cy" style="font-style:italic;">"Oli es un execution operator, ICP = founders, precio = $149/seat."</div>
+        </div>
+        <div class="card">
+          <div style="font-size:28px;margin-bottom:14px;">📋</div>
+          <div class="card-label">Capa 03 — Misiones</div>
+          <div style="font-size:17px;font-weight:600;color:var(--white);margin-bottom:12px;">Historial de trabajo</div>
+          <div class="body-sm" style="margin-bottom:12px;">Qué funcionó, qué falló, cuánto costó, qué misiones se repiten y son candidatas a playbook.</div>
+          <div class="body-sm cy" style="font-style:italic;">"El research brief tardó 8 min y costó $0.12 la última vez."</div>
+        </div>
+      </div>
+      <div style="margin-top:20px;padding:16px 20px;background:var(--black2);border-left:3px solid var(--cyan);border-radius:0 8px 8px 0;display:flex;gap:32px;">
+        <div class="body-sm"><span class="wh">Escritura automática:</span> Oli guarda sin pedir permiso. El founder edita o borra después desde el Memory Panel.</div>
+        <div class="body-sm"><span class="wh">Lo explícito gana:</span> Si el founder declara algo directamente, siempre tiene prioridad sobre lo que Oli infirió.</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         08 — SUBOPERADORES
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Trabajadores internos</div>
+      <div class="title-md">8 especialistas internos.<br>El founder solo habla con Oli.</div>
+      <div class="body-sm" style="margin-bottom:24px;max-width:700px;">Los suboperadores trabajan en paralelo dentro de cada misión. Nunca le hablan al founder. Nunca escriben directamente a la memoria. Oli sintetiza todo y entrega una sola respuesta.</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+        <div class="card" style="padding:16px;">
+          <div style="font-size:20px;margin-bottom:8px;">🔍</div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px;">MarketResearch</div>
+          <div style="font-size:12px;color:var(--dim);">Competidores, ICP, pricing — siempre con fuentes</div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div style="font-size:20px;margin-bottom:8px;">🏗️</div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px;">TechnicalArchitect</div>
+          <div style="font-size:12px;color:var(--dim);">Stack, tradeoffs, diseño técnico</div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div style="font-size:20px;margin-bottom:8px;">🔒</div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px;">SecurityReviewer</div>
+          <div style="font-size:12px;color:var(--dim);">Permisos, sandboxing, seguridad</div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div style="font-size:20px;margin-bottom:8px;">⚡</div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px;">Execution</div>
+          <div style="font-size:12px;color:var(--dim);">Acciones reales en el computador</div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div style="font-size:20px;margin-bottom:8px;">✅</div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px;">Validation</div>
+          <div style="font-size:12px;color:var(--dim);">Verifica el output antes de entregar</div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div style="font-size:20px;margin-bottom:8px;">👁️</div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px;">UXCritic</div>
+          <div style="font-size:12px;color:var(--dim);">Flujos, fricción, claridad</div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div style="font-size:20px;margin-bottom:8px;">📈</div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px;">Growth</div>
+          <div style="font-size:12px;color:var(--dim);">Posicionamiento, canales, campañas</div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div style="font-size:20px;margin-bottom:8px;">🧩</div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px;">MemoryCurator</div>
+          <div style="font-size:12px;color:var(--dim);">Sugiere qué recordar — no escribe directo</div>
+        </div>
+      </div>
+      <div style="padding:12px 18px;background:var(--black2);border-radius:8px;border:1px solid var(--faint);">
+        <div class="body-xs"><span class="wh">Regla inamovible:</span> los suboperadores <span class="cy">no contactan al founder</span> · <span class="cy">no aprueban su propio trabajo</span> · <span class="cy">no bypassean permisos</span> · <span class="cy">no entregan respuestas finales</span></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         09 — CONECTIVIDAD
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Stack de conectividad</div>
+      <div class="title-md">Oli elige el método<br>más eficiente, no el más fácil.</div>
+      <div class="body-sm" style="margin-bottom:24px;">Para conectarse a cualquier herramienta, Oli sigue esta jerarquía de decisión:</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:16px;padding:13px 16px;background:var(--black2);border-radius:8px;border:1px solid rgba(255,255,255,0.07);">
+          <span class="mo cy" style="font-size:11px;width:20px;flex-shrink:0;">01</span>
+          <div style="width:96px;height:3px;border-radius:2px;background:var(--cyan);flex-shrink:0;"></div>
+          <span style="font-size:15px;font-weight:600;min-width:160px;color:var(--white);">API directa</span>
+          <span class="body-xs">Notion, Slack, GitHub, Gmail — script TypeScript directo, sin intermediarios. El más rápido.</span>
+          <span class="pill pill-cy" style="font-size:11px;margin-left:auto;">Más rápido · $0</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:13px 16px;background:var(--black2);border-radius:8px;border:1px solid rgba(255,255,255,0.07);">
+          <span class="mo cy" style="font-size:11px;width:20px;flex-shrink:0;">02</span>
+          <div style="width:76px;height:3px;border-radius:2px;background:var(--cyan);flex-shrink:0;"></div>
+          <span style="font-size:15px;font-weight:600;min-width:160px;color:var(--white);">n8n webhook</span>
+          <span class="body-xs">Cuando el usuario ya tiene flujos en n8n o la lógica es muy compleja. Oli lo triggea.</span>
+          <span class="pill pill-gr" style="font-size:11px;margin-left:auto;">Reutiliza lo existente</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:13px 16px;background:var(--black2);border-radius:8px;border:1px solid rgba(255,255,255,0.07);">
+          <span class="mo cy" style="font-size:11px;width:20px;flex-shrink:0;">03</span>
+          <div style="width:56px;height:3px;border-radius:2px;background:var(--cyan);flex-shrink:0;"></div>
+          <span style="font-size:15px;font-weight:600;min-width:160px;color:var(--white);">MCP oficial</span>
+          <span class="body-xs">Browser, filesystem, desktop — donde el protocolo MCP agrega lógica real. Estándar 2026.</span>
+          <span class="pill pill-am" style="font-size:11px;margin-left:auto;">Estándar 2026</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:13px 16px;background:var(--black2);border-radius:8px;border:1px solid rgba(255,255,255,0.07);">
+          <span class="mo cy" style="font-size:11px;width:20px;flex-shrink:0;">04</span>
+          <div style="width:38px;height:3px;border-radius:2px;background:var(--cyan);flex-shrink:0;"></div>
+          <span style="font-size:15px;font-weight:600;min-width:160px;color:var(--white);">Linux shell / E2B</span>
+          <span class="body-xs">Cualquier CLI — Python, bash, ffmpeg, git, cualquier paquete instalable. El 90% del poder.</span>
+          <span class="pill pill-d" style="font-size:11px;margin-left:auto;">90% del cómputo</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:13px 16px;background:var(--black2);border-radius:8px;border:1px solid rgba(255,255,255,0.07);">
+          <span class="mo cy" style="font-size:11px;width:20px;flex-shrink:0;">05</span>
+          <div style="width:24px;height:3px;border-radius:2px;background:var(--cyan);flex-shrink:0;"></div>
+          <span style="font-size:15px;font-weight:600;min-width:160px;color:var(--white);">Stagehand / Playwright</span>
+          <span class="body-xs">Cualquier web. AI-híbrido para páginas dinámicas, determinístico para playbooks establecidos.</span>
+          <span class="pill pill-d" style="font-size:11px;margin-left:auto;">Browser</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:13px 16px;background:var(--black2);border-radius:8px;border:1px solid rgba(255,255,255,0.07);">
+          <span class="mo" style="font-size:11px;width:20px;flex-shrink:0;color:var(--dim);">06</span>
+          <div style="width:14px;height:3px;border-radius:2px;background:rgba(255,255,255,.15);flex-shrink:0;"></div>
+          <span style="font-size:15px;font-weight:500;min-width:160px;color:var(--dim);">ClawdCursor</span>
+          <span class="body-xs">Apps de escritorio sin API ni CLI. Usa el árbol de accesibilidad antes de tomar screenshots.</span>
+          <span class="pill pill-d" style="font-size:11px;margin-left:auto;">Desktop GUI</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         10 — AUTH
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Auth y credenciales</div>
+      <div class="title-md">El LLM nunca ve<br>un token. Nunca.</div>
+      <div class="two" style="margin-top:12px;">
+        <div>
+          <div class="body-sm" style="margin-bottom:20px;"><span class="wh">Patrón: Brokered Credentials.</span> El modelo decide qué hacer. Un broker separado hace el API call con las credenciales. Si alguien hackea el contexto del LLM, no hay credencial que robar.</div>
+          <div class="step"><div class="step-num">1</div><div><div class="step-title">Oli detecta que necesita un servicio</div><div class="step-desc">"Para guardar en tu Notion necesito acceso. ¿Lo conecto ahora?"</div></div></div>
+          <div class="step"><div class="step-num">2</div><div><div class="step-title">Oli genera el link de autorización</div><div class="step-desc">OAuth 2.0 con PKCE. El browser del usuario se abre en la pantalla de Notion.</div></div></div>
+          <div class="step"><div class="step-num">3</div><div><div class="step-title">El usuario aprueba con un click</div><div class="step-desc">Notion redirige a localhost:3847 — el servidor temporal de Oli.</div></div></div>
+          <div class="step"><div class="step-num">4</div><div><div class="step-title">Token va al OS Keychain</div><div class="step-desc">macOS Keychain / Windows Credential Manager / Linux Keyring. Cifrado por hardware. Nunca en texto.</div></div></div>
+          <div class="step"><div class="step-num" style="background:rgba(0,255,148,.1);border-color:rgba(0,255,148,.3);color:var(--green);">✓</div><div><div class="step-title" style="color:var(--green);">La misión continúa</div><div class="step-desc">El founder no vio el token. Oli no lo tiene en su contexto. El refresh es automático.</div></div></div>
+        </div>
+        <div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div class="stat"><div class="stat-n">1</div><div class="stat-l">click para conectar un servicio</div></div>
+            <div class="stat"><div class="stat-n">0</div><div class="stat-l">tokens en el contexto del modelo</div></div>
+          </div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-label">V1-V2 — keytar (OS nativo)</div>
+            <div class="body-sm">Usa el almacén seguro del sistema operativo. Zero configuración. El usuario nunca configura nada manualmente.</div>
+          </div>
+          <div class="card card-cyan">
+            <div class="card-label">V3+ — 1Password SDK / Bitwarden</div>
+            <div class="body-sm">El usuario controla su propio vault. Touch ID / Face ID para desbloquear. Cada acción queda en el audit trail de la misión.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         11 — APP DESKTOP + TV
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">UI nativa</div>
+      <div class="title-md">Una app en el computador.<br>Un dashboard en el TV.</div>
+      <div class="two" style="margin-top:12px;">
+        <div>
+          <div class="body-sm" style="margin-bottom:16px;"><span class="wh">La UI de Oli no es una página web.</span> Es una app nativa que vive en el tray del sistema, siempre activa, accesible con Cmd+Space o la wakeword "Oli".</div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-label">Electron (V0-V2) → Tauri (V3+)</div>
+            <div class="body-sm">Electron arranca rápido. Tauri reduce el tamaño de ~150MB a ~8MB y consume menos RAM. La transición es invisible para el usuario.</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Lo que tiene la app</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
+              <div class="body-xs">• Lista de misiones activas</div>
+              <div class="body-xs">• Evidence Drawer</div>
+              <div class="body-xs">• Cola de aprobaciones</div>
+              <div class="body-xs">• Memory Panel</div>
+              <div class="body-xs">• Biblioteca de playbooks</div>
+              <div class="body-xs">• Tool Registry</div>
+              <div class="body-xs">• Settings / credenciales</div>
+              <div class="body-xs">• Reportes de misiones</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="body-sm" style="margin-bottom:16px;"><span class="wh">El TV muestra el dashboard en tiempo real.</span> No es una réplica de la app — es una vista de lectura optimizada para ver desde lejos.</div>
+          <div class="card card-cyan" style="margin-bottom:12px;">
+            <div class="card-label">TV view — solo lectura</div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+              <div class="body-xs">• Misiones activas con estado en tiempo real</div>
+              <div class="body-xs">• El Orb de Oli (estado real del sistema)</div>
+              <div class="body-xs">• Métricas del día: tiempo ahorrado, costo</div>
+              <div class="body-xs">• Últimas 3 notificaciones importantes</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-label">Cómo se conecta al TV</div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+              <div style="display:flex;gap:10px;align-items:center;">
+                <span class="pill pill-gr" style="font-size:11px;">HDMI</span>
+                <div class="body-xs">Segundo monitor detectado automático. Sin latencia. V2.</div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <span class="pill pill-cy" style="font-size:11px;">Chromecast</span>
+                <div class="body-xs">Receiver app. Desde cualquier OS. V3.</div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <span class="pill pill-d" style="font-size:11px;">AirPlay</span>
+                <div class="body-xs">macOS → Apple TV. Latencia variable.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         12 — CASO 1: VOZ (parte 1)
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Caso 1 — Flujo de voz · 1 de 2</div>
+      <div class="title-sm">"Oli, prepara el reporte semanal"<br><span style="color:var(--dim);">Desde la wakeword hasta el plan aprobado</span></div>
+      <div class="two" style="margin-top:16px;">
+        <div>
+          <div style="font-size:13px;color:var(--cyan);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;">Capa local — tu máquina</div>
+          <div class="step"><div class="step-num">1</div><div><div class="step-title">OpenWakeWord detecta "Oli"</div><div class="step-desc">Modelo local ~40MB. Menos de 5ms. El audio nunca sale de tu máquina antes de la wakeword.</div></div></div>
+          <div class="step"><div class="step-num">2</div><div><div class="step-title">Graba la utterance</div><div class="step-desc">Voice Activity Detection — graba hasta que paras de hablar. ~3 segundos.</div></div></div>
+          <div class="step"><div class="step-num">3</div><div><div class="step-title">Whisper.cpp transcribe</div><div class="step-desc">Local: ~800ms CPU. O Whisper API: ~300ms. Output: "prepara el reporte semanal"</div></div></div>
+          <div class="step" style="border:none;"><div class="step-num">4</div><div><div class="step-title">Texto llega al Mission Kernel</div><div class="step-desc">CreateMission(raw_input, source: "voice_local"). La misión empieza.</div></div></div>
+        </div>
+        <div>
+          <div style="font-size:13px;color:var(--cyan);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;">Mission Kernel — planificación</div>
+          <div class="step"><div class="step-num">5</div><div><div class="step-title">InterpretIntent → Claude Haiku</div><div class="step-desc">Entiende: goal = "weekly_report", criterios = [métricas, formato tabla, &lt;500 palabras]</div></div></div>
+          <div class="step"><div class="step-num">6</div><div><div class="step-title">RetrieveContext → Memory</div><div class="step-desc">Recuerda: founder prefiere tablas, el reporte incluye ventas + métricas de producto.</div></div></div>
+          <div class="step"><div class="step-num">7</div><div><div class="step-title">Clasifica permisos del plan</div><div class="step-desc">BigQuery: clase 0 · Sheets: clase 1 · Enviar email al equipo: clase 3 → gate de aprobación.</div></div></div>
+          <div class="step" style="border:none;"><div class="step-num" style="background:rgba(0,229,255,.15);color:var(--cyan);">!</div><div><div class="step-title" style="color:var(--cyan);">TTS al founder</div><div class="step-desc" style="color:var(--cyan);">"Hago los 3 primeros pasos solo. Para enviar al equipo necesito tu ok. ~8 min, $0.12. ¿Arranco?"</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         13 — CASO 1: VOZ (parte 2)
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Caso 1 — Flujo de voz · 2 de 2</div>
+      <div class="title-sm">Founder dice "Sí".<br><span style="color:var(--dim);">Ejecución, entrega y aprendizaje</span></div>
+      <div class="two" style="margin-top:16px;">
+        <div>
+          <div style="font-size:13px;color:var(--cyan);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;">Ejecución</div>
+          <div class="step"><div class="step-num">8</div><div><div class="step-title">BigQuery API directa</div><div class="step-desc">SQL query → métricas reales de la semana. ~3-5 segundos.</div></div></div>
+          <div class="step"><div class="step-num">9</div><div><div class="step-title">Google Sheets API</div><div class="step-desc">Actualiza el dashboard del founder. ~1-2 segundos.</div></div></div>
+          <div class="step"><div class="step-num">10</div><div><div class="step-title">Claude Sonnet genera el texto</div><div class="step-desc">Reporte con datos reales, en formato tabla como prefiere el founder. ~4 segundos.</div></div></div>
+          <div class="step"><div class="step-num">11</div><div><div class="step-title">ValidationSuboperator verifica</div><div class="step-desc">✅ métricas incluidas · ✅ formato tabla · ✅ menos de 500 palabras</div></div></div>
+          <div class="step" style="border:none;"><div class="step-num">12</div><div><div class="step-title">Gate clase 3 → TTS</div><div class="step-desc">"El reporte está listo. ¿Lo envío?" → founder: "Sí" → Gmail API envía.</div></div></div>
+        </div>
+        <div>
+          <div style="font-size:13px;color:var(--cyan);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;">Reporte y aprendizaje</div>
+          <div class="card card-green" style="margin-bottom:12px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center;">
+              <div><div class="stat-n" style="font-size:32px;">7 min</div><div class="stat-l">duración total</div></div>
+              <div><div class="stat-n" style="font-size:32px;color:var(--green);">$0.11</div><div class="stat-l">costo de Oli</div></div>
+              <div><div class="stat-n" style="font-size:32px;color:var(--green);">2 hrs</div><div class="stat-l">tiempo humano ahorrado</div></div>
+              <div><div class="stat-n" style="font-size:32px;">4/4</div><div class="stat-l">steps completados</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-label">Aprendizaje automático</div>
+            <div class="body-sm" style="margin-bottom:8px;">MemoryCurator actualiza: weekly_report completado, formato aprobado, costo real guardado.</div>
+            <div class="body-sm"><span class="cy">PlaybookEngine evalúa:</span> es la 3ª misión similar → propone Playbook "weekly_report_v1". Los runs futuros son automáticos.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         14 — CASO 2: SISTEMA DE VENTAS (parte 1)
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Caso 2 — Sistema de automatización de ventas · 1 de 2</div>
+      <div class="title-sm">"Crea un sistema de ventas<br>para mi empresa B2B"</div>
+      <div class="two" style="margin-top:16px;">
+        <div>
+          <div style="font-size:13px;color:var(--cyan);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Fase 1 — Entiende (no asume)</div>
+          <div class="card" style="margin-bottom:14px;">
+            <div class="body-sm" style="margin-bottom:8px;">Oli pregunta exactamente 2 cosas:</div>
+            <div class="body-sm cy" style="margin-bottom:6px;">"¿Qué CRM usas actualmente?"</div>
+            <div class="body-sm cy" style="margin-bottom:10px;">"¿Tienes n8n o construimos desde cero?"</div>
+            <div class="body-sm">Founder: <span class="wh">"HubSpot. Ya tenemos n8n."</span></div>
+          </div>
+          <div style="font-size:13px;color:var(--cyan);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Fase 2 — Investiga</div>
+          <div class="card" style="margin-bottom:14px;">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span class="pill pill-cy" style="font-size:10px;flex-shrink:0;">MR</span><div class="body-sm">MarketResearchSuboperator: mejores prácticas B2B 2026, benchmarks de conversión, herramientas. ~4 min · $0.08</div></div>
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span class="pill pill-cy" style="font-size:10px;flex-shrink:0;">TA</span><div class="body-sm">TechnicalArchitectSuboperator: mapea stack HubSpot + n8n, diseña arquitectura, identifica riesgos. ~3 min</div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:13px;color:var(--cyan);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Fase 3 — Planifica (5 módulos)</div>
+          <div class="card" style="margin-bottom:14px;">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div class="body-sm"><span class="cy">A.</span> Formulario en el sitio → webhook → n8n</div>
+              <div class="body-sm"><span class="cy">B.</span> Calificación automática (LLM score 0-100)</div>
+              <div class="body-sm"><span class="cy">C.</span> HubSpot: crear contacto + deal + pipeline</div>
+              <div class="body-sm"><span class="cy">D.</span> Email sequences — 5 emails en 14 días</div>
+              <div class="body-sm am"><span>E.</span> Alertas Slack cuando score &gt; 80 → <span class="wh">clase 3: gate de aprobación</span></div>
+            </div>
+          </div>
+          <div style="font-size:13px;color:var(--cyan);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Fase 4 — Construye</div>
+          <div class="card">
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;justify-content:space-between;"><span class="body-sm">Formulario HTML+JS</span><span class="mo" style="font-size:11px;color:var(--dim);">linux_shell · 2 min</span></div>
+              <div style="display:flex;justify-content:space-between;"><span class="body-sm">Workflow n8n completo</span><span class="mo" style="font-size:11px;color:var(--dim);">n8n API · 5 min</span></div>
+              <div style="display:flex;justify-content:space-between;"><span class="body-sm">HubSpot configurado</span><span class="mo" style="font-size:11px;color:var(--dim);">API directa · 4 min</span></div>
+              <div style="display:flex;justify-content:space-between;"><span class="body-sm">Alertas Slack</span><span class="mo" style="font-size:11px;color:var(--dim);">Slack API · 2 min</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         15 — CASO 2: SISTEMA DE VENTAS (parte 2)
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Caso 2 — Sistema de automatización de ventas · 2 de 2</div>
+      <div class="title-sm">Oli lo prueba, lo entrega<br>y lo convierte en playbook.</div>
+      <div class="two" style="margin-top:16px;">
+        <div>
+          <div style="font-size:13px;color:var(--cyan);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Fase 5 — Prueba real</div>
+          <div class="card" style="margin-bottom:14px;">
+            <div class="body-sm" style="margin-bottom:8px;">ValidationSuboperator ejecuta 5 tests automáticos:</div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div class="body-sm"><span class="gr">✅</span> Lead de prueba llega a HubSpot correctamente</div>
+              <div class="body-sm"><span class="gr">✅</span> Score calculation funciona con datos ficticios</div>
+              <div class="body-sm"><span class="gr">✅</span> Email sequence se activa con score alto</div>
+              <div class="body-sm"><span class="gr">✅</span> Alerta Slack llega al vendedor correcto</div>
+              <div class="body-sm"><span class="gr">✅</span> Lead con score bajo NO activa la secuencia</div>
+            </div>
+          </div>
+          <div style="font-size:13px;color:var(--cyan);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Fase 6 — Entrega</div>
+          <div class="card">
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;gap:8px;"><span class="pill pill-gr" style="font-size:10px;">Link</span><div class="body-xs">URL del formulario listo para el sitio</div></div>
+              <div style="display:flex;gap:8px;"><span class="pill pill-gr" style="font-size:10px;">n8n</span><div class="body-xs">Workflow activo y testeado</div></div>
+              <div style="display:flex;gap:8px;"><span class="pill pill-gr" style="font-size:10px;">Docs</span><div class="body-xs">Documentación de cada módulo</div></div>
+              <div style="display:flex;gap:8px;"><span class="pill pill-gr" style="font-size:10px;">Tests</span><div class="body-xs">Evidence: 5/5 pasados con screenshots</div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div class="stat"><div class="stat-n">22 min</div><div class="stat-l">tiempo total de Oli</div></div>
+            <div class="stat"><div class="stat-n" style="color:var(--green);">16 hrs</div><div class="stat-l">equivalente humano</div></div>
+            <div class="stat"><div class="stat-n">$0.45</div><div class="stat-l">costo total de Oli</div></div>
+            <div class="stat"><div class="stat-n" style="color:var(--green);">5/5</div><div class="stat-l">tests pasados</div></div>
+          </div>
+          <div class="card card-cyan">
+            <div class="card-label">Playbook generado</div>
+            <div class="body-sm" style="margin-bottom:8px;"><span class="wh">sales_automation_b2b_v1</span> — la próxima empresa similar tarda 22 minutos, no 16 horas.</div>
+            <div class="body-sm">El playbook mejora con cada ejecución. Si un paso falla, Oli lo marca para revisión y actualiza el template.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         16 — CASO 3: WHATSAPP ASSISTANT (parte 1)
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Caso 3 — Asistente de WhatsApp · 1 de 2</div>
+      <div class="title-sm">Oli lee cada mensaje,<br>construye contexto y sugiere respuestas.</div>
+      <div class="two" style="margin-top:14px;">
+        <div>
+          <div style="font-size:13px;color:var(--cyan);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Lo que pasa en background</div>
+          <div class="step"><div class="step-num">1</div><div><div class="step-title">Juan escribe en WhatsApp</div><div class="step-desc">"Hola! Tengo una pregunta sobre la propuesta que me mandaste"</div></div></div>
+          <div class="step"><div class="step-num">2</div><div><div class="step-title">OpenClaw recibe → Oli vía MCP</div><div class="step-desc">source: "openclaw_whatsapp" · Oli crea una misión automática de clasificación.</div></div></div>
+          <div class="step"><div class="step-num">3</div><div><div class="step-title">Oli recupera contexto de Juan</div><div class="step-desc">Propuesta enviada hace 3 días · vio el email ayer · es cliente potencial · responde rápido.</div></div></div>
+          <div class="step" style="border:none;"><div class="step-num">4</div><div><div class="step-title">Actualiza la bitácora de Juan</div><div class="step-desc">Thread: propuesta → email abierto → <strong style="color:var(--white)">hoy 10:23am: pregunta sobre propuesta</strong></div></div></div>
+        </div>
+        <div>
+          <div style="font-size:13px;color:var(--cyan);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Notificación en tu app</div>
+          <div class="notif">
+            <div class="notif-header">
+              <div class="notif-icon">💬</div>
+              <div>
+                <div class="notif-name">Juan Pérez — WhatsApp</div>
+                <div class="notif-sub">hace 2 minutos · cliente potencial · propuesta: hace 3 días</div>
+              </div>
+            </div>
+            <div class="notif-msg">"Hola! Tengo una pregunta sobre la propuesta que me mandaste"</div>
+            <div class="notif-suggest">
+              <div class="notif-suggest-label">Sugerencia de Oli</div>
+              <div class="notif-suggest-text">"Hola Juan! Claro, dime qué necesitas saber. ¿Te parece si hacemos una llamada de 20 min esta semana?"</div>
+            </div>
+            <div class="notif-btns">
+              <button class="nbtn nbtn-cy">Enviar esta</button>
+              <button class="nbtn nbtn-d">Editar</button>
+              <button class="nbtn nbtn-d">Ignorar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         17 — CASO 3: WHATSAPP ASSISTANT (parte 2)
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Caso 3 — Asistente de WhatsApp · 2 de 2</div>
+      <div class="title-sm">Recordatorio inteligente,<br>agenda automática y gaps del TDD.</div>
+      <div class="two" style="margin-top:14px;">
+        <div>
+          <div style="font-size:13px;color:var(--cyan);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Si no respondes en 4 horas</div>
+          <div class="card" style="margin-bottom:14px;">
+            <div class="body-sm cy" style="margin-bottom:10px;">"Juan Pérez espera respuesta desde hace 4 horas. Preguntó sobre la propuesta. ¿Respondo con la sugerencia?"</div>
+            <div style="display:flex;gap:8px;"><span class="pill pill-gr" style="font-size:11px;">Sí → clase 3 → Oli envía</span><span class="pill pill-d" style="font-size:11px;">No → recordar mañana</span></div>
+          </div>
+          <div style="font-size:13px;color:var(--cyan);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Juan responde: "¿Llamada el jueves?"</div>
+          <div class="step"><div class="step-num">5</div><div><div class="step-title">Google Calendar verifica disponibilidad</div><div class="step-desc">Encuentra slot libre: jueves 3pm.</div></div></div>
+          <div class="step"><div class="step-num">6</div><div><div class="step-title">Founder aprueba → Oli confirma con Juan</div><div class="step-desc">Evento creado: "Call Juan Pérez - Propuesta" · Jueves 3pm · Google Meet link generado.</div></div></div>
+        </div>
+        <div>
+          <div style="font-size:13px;color:var(--amber);font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Gaps que este caso reveló en el TDD</div>
+          <div class="card card-red" style="margin-bottom:10px;">
+            <div class="card-label" style="color:var(--red);">Gap 01 — Contact Memory</div>
+            <div class="body-sm" style="margin-bottom:6px;">La memoria de empresa no tiene sub-capa de contactos. Falta: thread_history, tone_profile, relationship_stage.</div>
+            <div class="body-xs cy">→ Agregar a memory.ts: ContactMemoryEntry</div>
+          </div>
+          <div class="card card-red" style="margin-bottom:10px;">
+            <div class="card-label" style="color:var(--red);">Gap 02 — Background Agent Loop</div>
+            <div class="body-sm" style="margin-bottom:6px;">Oli solo reacciona a misiones iniciadas por el founder. Falta el loop que crea misiones automáticas cuando llega un evento externo.</div>
+            <div class="body-xs cy">→ ADR-016 pendiente: Event Triggers</div>
+          </div>
+          <div class="card card-red">
+            <div class="card-label" style="color:var(--red);">Gap 03 — Tipo de output</div>
+            <div class="body-sm" style="margin-bottom:6px;">El schema de misión no tiene "sugerencia de respuesta" como tipo de output válido.</div>
+            <div class="body-xs cy">→ Agregar a mission.ts: output_type: "draft_suggestion"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         NEW — CUÁNTO PREGUNTA OLI (corregido)
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Clarificación de intención — corregido</div>
+      <div class="title-md">Oli pregunta todo<br>lo que necesite.<br>No hay límite fijo.</div>
+      <div class="two" style="margin-top:12px;">
+        <div>
+          <div class="body-sm" style="margin-bottom:16px;">Un límite arbitrario de "2 preguntas" lleva a Oli a asumir cosas que no debería. Los humanos son malos optimizando sus prompts — Oli debe compensar eso.</div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-label">Antes de preguntar, Oli verifica</div>
+            <div style="display:flex;flex-direction:column;gap:7px;margin-top:4px;">
+              <div class="body-xs"><span class="cy">1.</span> ¿Está en la memoria del usuario? → usa directamente</div>
+              <div class="body-xs"><span class="cy">2.</span> ¿Está en la memoria de empresa? → usa directamente</div>
+              <div class="body-xs"><span class="cy">3.</span> ¿Se puede inferir con alta confianza? → usa con nota</div>
+              <div class="body-xs"><span class="cy">4.</span> ¿Si lo asumo mal, el costo de corrección es bajo? → asume y avisa</div>
+              <div class="body-xs am">5. ¿Si lo asumo mal, el resultado es inutilizable? → pregunta</div>
+            </div>
+          </div>
+          <div class="card card-cyan">
+            <div class="card-label">Lo que sí tiene límite: la calidad</div>
+            <div class="body-sm">Cada pregunta debe ser necesaria y tener un propósito explícito. Oli nunca pregunta lo mismo dos veces en la misma misión. Con el tiempo, pregunta menos porque conoce mejor al founder.</div>
+          </div>
+        </div>
+        <div>
+          <div class="card card-red" style="margin-bottom:12px;">
+            <div class="card-label" style="color:var(--red);">❌ Incorrecto — pregunta lo que puede inferir</div>
+            <div class="body-sm" style="margin-bottom:8px;">Founder: "Oli, prepara el reporte"</div>
+            <div class="body-xs" style="color:var(--red);">Oli: "¿Qué tipo de reporte?"</div>
+            <div class="body-xs" style="margin-top:6px;">(la memoria dice que siempre hace el reporte semanal de ventas)</div>
+          </div>
+          <div class="card card-green">
+            <div class="card-label" style="color:var(--green);">✅ Correcto — usa memoria, pregunta solo lo nuevo</div>
+            <div class="body-sm" style="margin-bottom:8px;">Founder: "Oli, prepara el reporte para el pitch de mañana"</div>
+            <div class="body-xs cy">"Entiendo — el reporte de ventas en formato ejecutivo. Necesito saber: ¿qué período cubre (este mes, Q1, YTD)? ¿A quién va dirigido específicamente?"</div>
+            <div class="body-xs" style="margin-top:6px;">(pregunta 2 cosas porque sin ellas el resultado sería incorrecto)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         NEW — TROUBLESHOOTING REAL (corregido)
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Cuando algo falla — corregido</div>
+      <div class="title-md">Oli diagnostica.<br>No reintenta ciegamente.</div>
+      <div class="two" style="margin-top:12px;">
+        <div>
+          <div class="body-sm" style="margin-bottom:16px;">El ciclo de troubleshooting correcto no tiene límite de intentos fijo. Continúa mientras Oli tenga nuevas estrategias y cada intento produzca nueva información.</div>
+          <div class="step"><div class="step-num">1</div><div><div class="step-title">Diagnosticar</div><div class="step-desc">¿Qué falló exactamente? ¿Cuál es la causa raíz? No el síntoma — la causa.</div></div></div>
+          <div class="step"><div class="step-num">2</div><div><div class="step-title">Clasificar el error</div><div class="step-desc">¿Transitorio? ¿Autenticación? ¿Recurso no encontrado? ¿Error de lógica? ¿Herramienta caída?</div></div></div>
+          <div class="step"><div class="step-num">3</div><div><div class="step-title">Aplicar estrategia según tipo</div><div class="step-desc">Transitorio → retry con backoff. Auth → renovar token. Herramienta caída → alternativa. Lógica → replantear el step.</div></div></div>
+          <div class="step"><div class="step-num">4</div><div><div class="step-title">Verificar y repetir si hay info nueva</div><div class="step-desc">Si falló pero produjo nueva información → nueva iteración con estrategia distinta.</div></div></div>
+          <div class="step" style="border:none;"><div class="step-num am">!</div><div><div class="step-title am">Escalar cuando el ciclo no converge</div><div class="step-desc">La solución requiere acceso que solo el founder tiene, o el costo de continuar supera el beneficio estimado.</div></div></div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-label">Lo que Oli presenta al escalar</div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+              <div class="body-xs"><span class="wh">Diagnóstico:</span> qué falló y por qué</div>
+              <div class="body-xs"><span class="wh">Intentos:</span> qué estrategia aplicó y qué resultado dio</div>
+              <div class="body-xs"><span class="wh">Límite:</span> por qué no puede resolverlo solo</div>
+              <div class="body-xs"><span class="wh">Opciones:</span> Opción A / B / C con resultado esperado de cada una</div>
+            </div>
+          </div>
+          <div class="card card-cyan">
+            <div class="card-label">Los errores se aprenden</div>
+            <div class="body-sm">Los patrones de error y sus soluciones se guardan en Mission Memory. La próxima vez que ocurra el mismo tipo de error, Oli llega directo a la solución correcta. El troubleshooting mejora con el uso.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         NEW — MEMORIA INFINITA CON RAG
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">La feature más importante — ADR-003</div>
+      <div class="title-md">Memoria infinita.<br>RAG desde el día uno.</div>
+      <div class="two" style="margin-top:12px;">
+        <div>
+          <div class="body-sm" style="margin-bottom:16px;">Sin RAG, Oli empieza cada misión desde cero. Es un chatbot con mejor UI. <span class="wh">Con RAG, Oli recuerda todo lo que ha aprendido — para siempre — y recupera exactamente lo relevante para cada misión.</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div class="card" style="padding:14px;display:flex;gap:12px;align-items:flex-start;">
+              <span class="pill pill-cy" style="font-size:10px;flex-shrink:0;">Capa 1</span>
+              <div><div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px;">Contexto activo (RAM)</div><div class="body-xs">Misión actual + lo recuperado del vector store. ~10-50K tokens. Dura la sesión.</div></div>
+            </div>
+            <div class="card card-cyan" style="padding:14px;display:flex;gap:12px;align-items:flex-start;">
+              <span class="pill pill-cy" style="font-size:10px;flex-shrink:0;">Capa 2</span>
+              <div><div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px;">Vector store — ChromaDB (V0) → Qdrant (V3+)</div><div class="body-xs">Todo lo que Oli aprendió, en embeddings. Búsqueda semántica. Crece sin límite. Es el núcleo del RAG.</div></div>
+            </div>
+            <div class="card" style="padding:14px;display:flex;gap:12px;align-items:flex-start;">
+              <span class="pill pill-d" style="font-size:10px;flex-shrink:0;">Capa 3</span>
+              <div><div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px;">SQLite / PostgreSQL — queries exactas</div><div class="body-xs">"Todas las misiones de este mes", "costo por tipo". Complementa el vector store.</div></div>
+            </div>
+            <div class="card" style="padding:14px;display:flex;gap:12px;align-items:flex-start;">
+              <span class="pill pill-d" style="font-size:10px;flex-shrink:0;">Capa 4</span>
+              <div><div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px;">Cold storage — historial archivado</div><div class="body-xs">Datos de más de N meses. JSON comprimido. Recuperable on-demand si se necesita contexto muy antiguo.</div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-label">Cómo funciona RAG en cada misión</div>
+            <div class="body-xs" style="margin-bottom:8px;color:var(--white);">Founder: "Oli, prepara la propuesta para Acme Corp"</div>
+            <div class="body-xs" style="margin-bottom:4px;">Antes de hacer nada, Oli hace retrieval:</div>
+            <div class="body-xs cy" style="margin-bottom:2px;">→ "Acme Corp" → reuniones, pain points, sector</div>
+            <div class="body-xs cy" style="margin-bottom:2px;">→ "propuesta" → formato, propuestas que funcionaron</div>
+            <div class="body-xs cy" style="margin-bottom:8px;">→ "Acme industria" → research previo, competidores</div>
+            <div class="body-xs">Resultado: 5-15K tokens de contexto exactamente relevante inyectados al LLM. No todo — solo lo que importa para esta misión.</div>
+          </div>
+          <div class="card card-cyan">
+            <div class="card-label">La memoria es el moat</div>
+            <div class="body-sm">Un competidor puede copiar la UI, los tools, el Mission Kernel. <span class="wh">No puede copiar 2 años de contexto acumulado de un usuario.</span> Cuanto más usa Oli el founder, más valioso se vuelve y más difícil es irse.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         NEW — GPU LOCAL VS API
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Model routing — ADR-016</div>
+      <div class="title-md">Oli decide qué modelo usar.<br>Local cuando puede.<br>API cuando lo vale.</div>
+      <div class="two" style="margin-top:12px;">
+        <div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div class="card card-green" style="padding:16px;">
+              <div class="card-label" style="color:var(--green);">Tier 1 — Modelo local (costo $0)</div>
+              <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:6px;">Tasks simples: intent, clasificación, routing</div>
+              <div class="body-xs">Llama 3.1 8B / Mistral 7B via Ollama. Si hay GPU: gratis. Sin GPU: Haiku como fallback barato.</div>
+            </div>
+            <div class="card" style="padding:16px;">
+              <div class="card-label">Tier 2 — GPU potente o Haiku</div>
+              <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:6px;">Razonamiento medio: planificación, síntesis</div>
+              <div class="body-xs">Con GPU 48GB: Llama 3.1 70B o Qwen 2.5 72B. Sin GPU suficiente: Claude Haiku o GPT-4o-mini.</div>
+            </div>
+            <div class="card" style="padding:16px;">
+              <div class="card-label">Tier 3 — Claude Sonnet (siempre API)</div>
+              <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:6px;">Tasks complejas: arquitectura, código profundo</div>
+              <div class="body-xs">Los modelos locales no llegan a este nivel todavía. Claude Sonnet es la opción correcta para decisiones de alta consecuencia.</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-label">GPU alquilada — el cálculo</div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+              <div class="body-xs"><span class="wh">Sin GPU — 100% API (100 misiones/mes):</span></div>
+              <div class="body-xs cy">~$5/mes en modelos</div>
+              <div style="height:6px;"></div>
+              <div class="body-xs"><span class="wh">Con GPU alquilada (RunPod A40, ~$0.50/hr):</span></div>
+              <div class="body-xs cy">~5 hrs/mes de uso → $2.50 GPU</div>
+              <div class="body-xs cy">+ $1 API solo para Tier 3</div>
+              <div class="body-xs cy">= $3.50/mes — más barato Y más privado</div>
+              <div style="height:6px;"></div>
+              <div class="body-xs am">Break-even: ~30-40 misiones/mes</div>
+            </div>
+          </div>
+          <div class="card card-cyan">
+            <div class="card-label">Privacy mode — el usuario elige</div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+              <div class="body-xs"><span class="wh">local_only:</span> todo en GPU propia. Nada va a Anthropic/OpenAI. Trade-off: calidad menor en Tier 3.</div>
+              <div class="body-xs"><span class="wh">hybrid (default):</span> simples → local, complejos → API. Mejor balance.</div>
+              <div class="body-xs"><span class="wh">cloud_ok:</span> todo puede ir a APIs. Más fácil, más caro.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         NEW — LAS 10 HERRAMIENTAS NÚCLEO
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Herramientas núcleo — sin estas no hay producto</div>
+      <div class="title-sm">10 herramientas indispensables.<br><span style="color:var(--dim);">El usuario puede agregar lo que quiera encima.</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;">
+        <div class="card" style="padding:14px;display:flex;gap:10px;align-items:flex-start;">
+          <span class="pill pill-cy" style="font-size:10px;flex-shrink:0;">01</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px;">ChromaDB — memoria RAG</div><div class="body-xs">"Escríbele a María" → Oli ya sabe quién es, su tono, su empresa, sin preguntar nada.</div></div>
+        </div>
+        <div class="card" style="padding:14px;display:flex;gap:10px;align-items:flex-start;">
+          <span class="pill pill-cy" style="font-size:10px;flex-shrink:0;">02</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px;">Filesystem MCP — archivos</div><div class="body-xs">"Analiza el contrato en Descargas" → lee el PDF, extrae cláusulas, crea resumen en Documents/.</div></div>
+        </div>
+        <div class="card" style="padding:14px;display:flex;gap:10px;align-items:flex-start;">
+          <span class="pill pill-cy" style="font-size:10px;flex-shrink:0;">03</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px;">Linux shell / E2B — cualquier CLI</div><div class="body-xs">"Convierte todos los videos a MP4" → ffmpeg procesa 47 archivos en 3 minutos.</div></div>
+        </div>
+        <div class="card" style="padding:14px;display:flex;gap:10px;align-items:flex-start;">
+          <span class="pill pill-cy" style="font-size:10px;flex-shrink:0;">04</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px;">Exa / Tavily — web search</div><div class="body-xs">"¿Precio actual de Notion?" → busca, extrae la página de precios, responde con fuente verificada hoy.</div></div>
+        </div>
+        <div class="card" style="padding:14px;display:flex;gap:10px;align-items:flex-start;">
+          <span class="pill pill-cy" style="font-size:10px;flex-shrink:0;">05</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px;">Gmail API — email</div><div class="body-xs">"Responde clientes > 24h sin respuesta" → lee inbox, redacta 3 respuestas, founder aprueba, envía.</div></div>
+        </div>
+        <div class="card" style="padding:14px;display:flex;gap:10px;align-items:flex-start;">
+          <span class="pill pill-cy" style="font-size:10px;flex-shrink:0;">06</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px;">Google Calendar API — agenda</div><div class="body-xs">"Agenda reunión con Juan esta semana" → verifica slots, propone horarios, crea evento + Meet link.</div></div>
+        </div>
+        <div class="card" style="padding:14px;display:flex;gap:10px;align-items:flex-start;">
+          <span class="pill pill-cy" style="font-size:10px;flex-shrink:0;">07</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px;">GitHub API — código</div><div class="body-xs">"¿Qué PRs tienen conflictos?" → lista todos, lee cada diff, identifica archivos en conflicto.</div></div>
+        </div>
+        <div class="card" style="padding:14px;display:flex;gap:10px;align-items:flex-start;">
+          <span class="pill pill-cy" style="font-size:10px;flex-shrink:0;">08</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px;">Playwright MCP — browser</div><div class="body-xs">"Publica este artículo en WordPress" → navega, pega contenido, configura tags, publica, verifica URL.</div></div>
+        </div>
+        <div class="card" style="padding:14px;display:flex;gap:10px;align-items:flex-start;">
+          <span class="pill pill-cy" style="font-size:10px;flex-shrink:0;">09</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px;">Whisper STT — escucha</div><div class="body-xs">"Oli, ¿cuánto costó la misión de hoy?" → transcribe en ~300ms local. Sin audio a la nube antes de la wakeword.</div></div>
+        </div>
+        <div class="card" style="padding:14px;display:flex;gap:10px;align-items:flex-start;">
+          <span class="pill pill-cy" style="font-size:10px;flex-shrink:0;">10</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px;">ElevenLabs TTS — habla</div><div class="body-xs">"La misión de research costó $0.18 y tomó 11 min." Avisa de bloqueos entre reuniones via voz.</div></div>
+        </div>
+      </div>
+      <div style="margin-top:10px;padding:10px 16px;background:var(--black2);border-left:2px solid var(--cyan);border-radius:0 6px 6px 0;">
+        <div class="body-xs"><span class="wh">Extensible sin límite:</span> si una herramienta tiene API REST → API directa · MCP server oficial → Tool Router · solo CLI → linux_shell · solo web → Playwright · solo GUI → ClawdCursor.</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         NEW — TV CUSTOMIZABLE
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">TV Dashboard — ADR-015</div>
+      <div class="title-md">El TV muestra lo que<br>el usuario quiere ver.</div>
+      <div class="two" style="margin-top:12px;">
+        <div>
+          <div class="body-sm" style="margin-bottom:16px;">No es un dashboard fijo de solo lectura. Es un sistema de widgets configurables — el founder decide qué información quiere ver en la pantalla grande.</div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-label">Widgets disponibles (configurables)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;">
+              <div class="body-xs">• Misiones activas + estado</div>
+              <div class="body-xs">• Orb de Oli (estado real)</div>
+              <div class="body-xs">• Costo del día / semana</div>
+              <div class="body-xs">• Tiempo ahorrado acumulado</div>
+              <div class="body-xs">• Inbox de WhatsApp</div>
+              <div class="body-xs">• Métricas del negocio</div>
+              <div class="body-xs">• Cola de aprobaciones</div>
+              <div class="body-xs">• Playbooks más usados</div>
+              <div class="body-xs">• Calendario del día</div>
+              <div class="body-xs">• Últimas misiones</div>
+            </div>
+          </div>
+          <div class="card card-cyan">
+            <div class="card-label">Personalización</div>
+            <div class="body-sm">Drag & drop para organizar widgets. Tamaño ajustable. El layout se guarda por usuario. Oli puede sugerir layouts según el tipo de trabajo del día.</div>
+          </div>
+        </div>
+        <div>
+          <div class="body-sm" style="margin-bottom:16px;"><span class="wh">Cómo se conecta al TV:</span> Oli detecta automáticamente si hay una segunda pantalla conectada.</div>
+          <div class="step"><div class="step-num" style="background:rgba(0,255,148,.1);color:var(--green);">V2</div><div><div class="step-title">HDMI — segundo monitor</div><div class="step-desc">Oli detecta la segunda pantalla y lanza el TV dashboard automáticamente. Sin configuración. Sin latencia. El usuario mueve una ventana al TV.</div></div></div>
+          <div class="step"><div class="step-num">V3</div><div><div class="step-title">Chromecast receiver app</div><div class="step-desc">Funciona desde cualquier OS. No requiere HDMI. El TV recibe los updates via WiFi. Latencia baja.</div></div></div>
+          <div class="step" style="border:none;"><div class="step-num">V3+</div><div><div class="step-title">AirPlay (macOS)</div><div class="step-desc">Para Apple TV o Smart TVs compatibles. Latencia variable. Más dependiente del hardware.</div></div></div>
+          <div style="margin-top:16px;padding:12px 14px;background:var(--black2);border-radius:8px;border:1px solid var(--faint);">
+            <div class="body-xs">En todos los casos: el TV nunca tiene credenciales. Solo recibe el estado actualizado de la app desktop via IPC local o Cast. Las credenciales viven siempre en el OS Keychain del computador.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         18 — ROADMAP
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Roadmap V0 → V5</div>
+      <div class="title-md">6 versiones.<br>Cada una responde una pregunta.</div>
+      <div style="margin-top:24px;">
+        <div class="timeline">
+          <div class="titem"><div class="tdot"></div><div class="ttag">V0</div><div class="ttitle">¿Qué significa ejecutar una misión bien?</div><div class="tdesc">Mission Kernel · State machine · Mock runner · Evidence · Permisos · Reporte</div></div>
+          <div class="titem"><div class="tdot now"></div><div class="ttag" style="color:var(--green);">V1 ← aquí</div><div class="ttitle">¿Oli puede ayudar al founder a construir Oli?</div><div class="tdesc">Misiones reales · Memoria · Voz "Oli" · Filesystem · El founder usa Oli para construir Oli</div></div>
+          <div class="titem"><div class="tdot"></div><div class="ttag">V2</div><div class="ttitle">¿Oli se siente como que recuerda?</div><div class="tdesc">Memory Graph completo · "What Oli knows" · App desktop · TV view</div></div>
+          <div class="titem"><div class="tdot"></div><div class="ttag">V3</div><div class="ttitle">¿Puede Oli ejecutar trabajo real?</div><div class="tdesc">Browser · Desktop GUI · E2B sandbox · OAuth UI · WhatsApp assistant</div></div>
+          <div class="titem"><div class="tdot"></div><div class="ttag">V4</div><div class="ttitle">¿Convierte trabajo repetido en sistemas?</div><div class="tdesc">Playbook engine · Linux persistente · Background agent loop</div></div>
+          <div class="titem" style="padding-right:0;"><div class="tdot"></div><div class="ttag">V5</div><div class="ttitle">¿Es tan bueno que un founder pagaría?</div><div class="tdesc">5+ clases de misiones excelentes · Usuarios reales · Evidencia de valor</div></div>
+        </div>
+      </div>
+      <div style="margin-top:32px;padding:16px 20px;background:var(--black2);border-left:3px solid var(--cyan);border-radius:0 8px 8px 0;">
+        <div class="body-sm"><span class="wh">Filosofía:</span> V0-V4 son privados e internos. V5 es el primer release con usuarios reales seleccionados. <span class="cy">No se lanza un MVP mediocre.</span></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         19 — BUILD V0
+    ════════════════════════════════════════════════════════ -->
+    <div class="slide">
+      <div class="label">Siguiente paso</div>
+      <div class="title-md">El pre-desarrollo está completo.<br><span class="cy">Arranca el código.</span></div>
+      <div class="body" style="margin-bottom:32px;max-width:600px;">
+        Todo lo que el código necesita saber está documentado. El orden de construcción es estricto — nunca saltear un paso.
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px;">
+        <div class="card" style="text-align:center;padding:20px 12px;"><div class="card-label">01</div><div style="font-size:15px;font-weight:600;color:var(--white);margin-bottom:6px;">package.json</div><div class="body-xs">Bun · Anthropic SDK · Zod · keytar</div></div>
+        <div class="card" style="text-align:center;padding:20px 12px;"><div class="card-label">02</div><div style="font-size:15px;font-weight:600;color:var(--white);margin-bottom:6px;">src/types/</div><div class="body-xs">Los schemas del TDD como código TypeScript</div></div>
+        <div class="card" style="text-align:center;padding:20px 12px;"><div class="card-label">03</div><div style="font-size:15px;font-weight:600;color:var(--white);margin-bottom:6px;">State machine</div><div class="body-xs">Los 18 estados implementados</div></div>
+        <div class="card" style="text-align:center;padding:20px 12px;"><div class="card-label">04</div><div style="font-size:15px;font-weight:600;color:var(--white);margin-bottom:6px;">Mission Kernel</div><div class="body-xs">El orquestador principal</div></div>
+        <div class="card card-cyan" style="text-align:center;padding:20px 12px;"><div class="card-label">05</div><div style="font-size:15px;font-weight:600;color:var(--cyan);margin-bottom:6px;">Test e2e</div><div class="body-xs">Slice-001 corriendo de punta a punta</div></div>
+      </div>
+      <div style="display:flex;gap:12px;">
+        <span class="pill pill-cy">15 ADRs completos</span>
+        <span class="pill pill-gr">5 schemas TypeScript</span>
+        <span class="pill pill-gr">3 flujos demostrados</span>
+        <span class="pill pill-am">3 gaps identificados</span>
+        <span class="pill pill-d">ADR-016 pendiente</span>
+      </div>
+    </div>
+
+  </div><!-- /slides -->
+
+  <div id="footer">
+    <button class="btn" id="prev">←</button>
+    <button class="btn" id="next">→</button>
+  </div>
+
+  <div id="progressbar"></div>
+
+</div><!-- /stage -->
+
+<script>
+// ── Scale stage to viewport
+function scale() {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const sw = 1280, sh = 720;
+  const s = Math.min(vw / sw, vh / sh);
+  const stage = document.getElementById('stage');
+  stage.style.transform = `scale(${s})`;
+  stage.style.left = ((vw - sw * s) / 2) + 'px';
+  stage.style.top = ((vh - sh * s) / 2) + 'px';
+}
+scale();
+window.addEventListener('resize', scale);
+
+// ── Slides
+const slides = document.querySelectorAll('.slide');
+const N = slides.length;
+let cur = 0;
+
+document.getElementById('tot').textContent = String(N).padStart(2,'0');
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < N; i++) {
+  const d = document.createElement('button');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.addEventListener('click', () => go(i));
+  dotsEl.appendChild(d);
+}
+
+function go(idx) {
+  if (idx < 0 || idx >= N) return;
+  slides[cur].classList.remove('active');
+  cur = idx;
+  slides[cur].classList.add('active');
+  document.getElementById('cur').textContent = String(cur + 1).padStart(2,'0');
+  document.getElementById('progressbar').style.width = ((cur + 1) / N * 100) + '%';
+  document.getElementById('prev').disabled = cur === 0;
+  document.getElementById('next').disabled = cur === N - 1;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === cur));
+}
+
+document.getElementById('prev').addEventListener('click', () => go(cur - 1));
+document.getElementById('next').addEventListener('click', () => go(cur + 1));
+document.getElementById('prev').disabled = true;
+document.getElementById('progressbar').style.width = (1 / N * 100) + '%';
+
+document.addEventListener('keydown', e => {
+  if (['ArrowRight', 'ArrowDown', ' '].includes(e.key)) { e.preventDefault(); go(cur + 1); }
+  if (['ArrowLeft', 'ArrowUp'].includes(e.key)) { e.preventDefault(); go(cur - 1); }
+});
+</script>
+
+</body>
+</html>

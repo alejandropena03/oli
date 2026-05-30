@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <linearGradient id="fade" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0A0A0A;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#111111;stop-opacity:1"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1A1A1A" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="800" fill="url(#fade)"/>
+  <rect width="1200" height="800" fill="url(#grid)"/>
+
+  <!-- Horizontal execution layers — stacked, varying width, offset -->
+  <!-- Layer 6 (bottom, widest, dimmest) -->
+  <rect x="100" y="680" width="1000" height="4" fill="#2A2A2A" rx="2"/>
+  <!-- Layer 5 -->
+  <rect x="100" y="620" width="860" height="5" fill="#3A3A3A" rx="2"/>
+  <!-- Layer 4 -->
+  <rect x="100" y="560" width="720" height="5" fill="#555555" rx="2"/>
+  <!-- Layer 3 -->
+  <rect x="100" y="500" width="600" height="6" fill="#9A9A9A" rx="2"/>
+  <!-- Layer 2: platinum -->
+  <rect x="100" y="440" width="500" height="6" fill="#E8E8E8" rx="2"/>
+  <!-- Layer 1: cyan — topmost, active layer -->
+  <rect x="100" y="380" width="360" height="7" fill="#00E5FF" rx="2"/>
+
+  <!-- Flow dots going up the cyan layer -->
+  <circle cx="200" cy="380" r="3" fill="#00E5FF" opacity="0.8"/>
+  <circle cx="260" cy="380" r="3" fill="#00E5FF" opacity="0.5"/>
+  <circle cx="320" cy="380" r="3" fill="#00E5FF" opacity="0.3"/>
+
+  <!-- Vertical connectors between layers -->
+  <line x1="460" y1="387" x2="460" y2="500" stroke="#E8E8E8" stroke-width="1" opacity="0.3"/>
+  <line x1="600" y1="506" x2="600" y2="560" stroke="#9A9A9A" stroke-width="1" opacity="0.2"/>
+  <line x1="720" y1="565" x2="720" y2="620" stroke="#555555" stroke-width="1" opacity="0.2"/>
+  <line x1="860" y1="625" x2="860" y2="680" stroke="#3A3A3A" stroke-width="1" opacity="0.2"/>
+
+  <!-- /oli logo top left -->
+  <circle cx="140" cy="80" r="36" stroke="#E8E8E8" stroke-width="1.5" fill="none"/>
+  <line x1="126" y1="106" x2="154" y2="54" stroke="#00E5FF" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Labels -->
+  <text x="480" y="375" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#00E5FF" letter-spacing="2">EXECUTION LAYER</text>
+  <text x="520" y="435" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#E8E8E8" letter-spacing="2" opacity="0.7">INTELLIGENCE LAYER</text>
+  <text x="620" y="496" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#9A9A9A" letter-spacing="2" opacity="0.6">TOOL CONNECTORS</text>
+  <text x="740" y="556" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555555" letter-spacing="2">DATA LAYER</text>
+  <text x="880" y="616" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#3A3A3A" letter-spacing="2">INFRASTRUCTURE</text>
+
+  <!-- Headline -->
+  <text x="100" y="280" font-family="'Helvetica Neue', Arial, sans-serif" font-size="56" font-weight="700" fill="#FFFFFF" letter-spacing="-2">The Execution Layer.</text>
+  <text x="100" y="340" font-family="'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="300" fill="#9A9A9A">Between intent and outcome, /oli executes.</text>
+</svg>

@@ -1,0 +1,19 @@
+{
+  "name": "oli-brand",
+  "version": "1.0.0",
+  "description": "Oli brand asset pipeline",
+  "scripts": {
+    "export:logos":    "node scripts/export-logos.js",
+    "export:icons":    "node scripts/export-icons.js",
+    "export:mockups":  "node scripts/export-mockups.js",
+    "build:brandbook": "node scripts/build-brandbook.js",
+    "export:all":      "npm run export:logos && npm run export:icons && npm run export:mockups"
+  },
+  "dependencies": {
+    "sharp": "^0.33.4",
+    "svgo":  "^3.3.2"
+  },
+  "devDependencies": {
+    "svg2pdf.js": "^2.2.3"
+  }
+}

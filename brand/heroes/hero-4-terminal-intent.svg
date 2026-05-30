@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <rect width="1200" height="800" fill="#0A0A0A"/>
+  <defs>
+    <pattern id="g2" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="800" fill="url(#g2)"/>
+
+  <!-- Left panel: human intent (natural language) -->
+  <rect x="60" y="140" width="480" height="520" fill="#111111" stroke="#2A2A2A" stroke-width="1" rx="4"/>
+  <rect x="60" y="140" width="480" height="36" fill="#1A1A1A" rx="4"/>
+  <text x="100" y="163" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555555" letter-spacing="3">INTENT</text>
+  <!-- Natural language text blocks -->
+  <text x="88" y="220" font-family="Georgia, serif" font-size="18" fill="#E8E8E8">"Deploy the latest build to staging,</text>
+  <text x="88" y="248" font-family="Georgia, serif" font-size="18" fill="#E8E8E8">run the smoke tests, and if they</text>
+  <text x="88" y="276" font-family="Georgia, serif" font-size="18" fill="#E8E8E8">pass, promote to production."</text>
+  <rect x="88" y="300" width="3" height="24" fill="#00E5FF" opacity="0.8"/>
+
+  <text x="88" y="380" font-family="Georgia, serif" font-size="15" fill="#555555">"Summarize this week's Slack</text>
+  <text x="88" y="402" font-family="Georgia, serif" font-size="15" fill="#555555">messages and create a Notion page."</text>
+
+  <text x="88" y="460" font-family="Georgia, serif" font-size="15" fill="#3A3A3A">"Clean up the /tmp folder and</text>
+  <text x="88" y="482" font-family="Georgia, serif" font-size="15" fill="#3A3A3A">send a report to #ops."</text>
+
+  <!-- Center: /oli separator -->
+  <line x1="600" y1="140" x2="600" y2="660" stroke="#00E5FF" stroke-width="1.5"/>
+  <rect x="565" y="370" width="70" height="60" fill="#0A0A0A" stroke="none"/>
+  <circle cx="600" cy="400" r="28" fill="#0A0A0A" stroke="#00E5FF" stroke-width="1.5"/>
+  <line x1="588" y1="418" x2="612" y2="382" stroke="#00E5FF" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Right panel: terminal execution -->
+  <rect x="660" y="140" width="480" height="520" fill="#0D0D0D" stroke="#2A2A2A" stroke-width="1" rx="4"/>
+  <rect x="660" y="140" width="480" height="36" fill="#1A1A1A" rx="4"/>
+  <circle cx="684" cy="158" r="5" fill="#3A3A3A"/>
+  <circle cx="702" cy="158" r="5" fill="#3A3A3A"/>
+  <circle cx="720" cy="158" r="5" fill="#3A3A3A"/>
+  <text x="900" y="163" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555555" letter-spacing="3" text-anchor="middle">EXECUTION</text>
+  <!-- Terminal lines -->
+  <text x="688" y="202" font-family="'Courier New', monospace" font-size="13" fill="#555555">$ /oli deploy --target staging</text>
+  <text x="688" y="224" font-family="'Courier New', monospace" font-size="13" fill="#9A9A9A">→ Building image: sha256:a4f2...</text>
+  <text x="688" y="246" font-family="'Courier New', monospace" font-size="13" fill="#9A9A9A">→ Pushing to registry...</text>
+  <text x="688" y="268" font-family="'Courier New', monospace" font-size="13" fill="#00FF87">✓ Deployed to staging in 42s</text>
+  <text x="688" y="290" font-family="'Courier New', monospace" font-size="13" fill="#555555">$ /oli test --suite smoke</text>
+  <text x="688" y="312" font-family="'Courier New', monospace" font-size="13" fill="#9A9A9A">→ Running 24 tests...</text>
+  <text x="688" y="334" font-family="'Courier New', monospace" font-size="13" fill="#00FF87">✓ 24/24 passed (3.2s)</text>
+  <text x="688" y="356" font-family="'Courier New', monospace" font-size="13" fill="#555555">$ /oli promote --from staging --to prod</text>
+  <text x="688" y="378" font-family="'Courier New', monospace" font-size="13" fill="#9A9A9A">→ Traffic shifting: 0% → 100%</text>
+  <text x="688" y="400" font-family="'Courier New', monospace" font-size="13" fill="#00FF87">✓ Production live</text>
+  <rect x="688" y="418" width="8" height="14" fill="#E8E8E8"/>
+
+  <!-- Headline bottom -->
+  <text x="100" y="720" font-family="'Helvetica Neue', Arial, sans-serif" font-size="44" font-weight="700" fill="#FFFFFF" letter-spacing="-2">Human intent. Machine precision.</text>
+</svg>

@@ -1,0 +1,60 @@
+# Node / brand pipeline
+brand/node_modules/
+brand/dist/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Python (para cuando arranque V0)
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.Python
+build/
+dist/
+*.egg
+.venv/
+venv/
+env/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Env / secrets — IMPORTANTE
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets/
+credentials/
+
+# Zips redundantes (los docs ya están extraídos)
+oli_docs*.zip
+oli_technical_foundation*.zip
+
+# Imágenes pesadas (mantener en brand/ si son fuente)
+Gemini_Generated_Image_*.png
+
+# Logs
+logs/
+*.log
+
+# DBs locales
+*.sqlite
+*.db
+
+# Coverage / tests
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

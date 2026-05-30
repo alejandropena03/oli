@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- App icon: Route B slash command — bold, geometric, reads well as app icon -->
+  <rect width="1024" height="1024" fill="#0A0A0A" rx="224"/>
+  <!-- Subtle grid texture -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1A1A1A" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#grid)" rx="224"/>
+  <!-- Bold geometric slash — Route B style with shadow depth -->
+  <polygon points="280,820 420,200 520,200 380,820" fill="#003A44" opacity="0.6"/>
+  <polygon points="260,800 400,180 500,180 360,800" fill="#00E5FF"/>
+  <!-- Small cursor indicator bottom-right -->
+  <rect x="600" y="740" width="40" height="80" fill="#00E5FF" opacity="0.5"/>
+  <!-- Tiny "oli" mark bottom right corner, subtle -->
+  <text x="820" y="940" font-family="'Helvetica Neue', Arial, sans-serif" font-size="48" font-weight="300" fill="#9A9A9A" letter-spacing="-1">oli</text>
+</svg>
