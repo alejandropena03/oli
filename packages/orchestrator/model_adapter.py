@@ -26,6 +26,73 @@ class MockModelAdapter:
         return f"[mock-model] {prompt}"
 
 
+class MockIntentModelAdapter:
+    """Adapter para tests del orchestrator LLM-first.
+
+    Devuelve respuestas JSON válidas para prompts de interpretación de intención,
+    y texto plano para prompts de ejecución y síntesis. Permite testear el pipeline
+    completo sin red ni modelo real.
+    """
+
+    name = "mock_intent"
+
+    _INTENT_RESPONSE = """{
+  "goal": "test_mission",
+  "summary": "Misión de prueba generada por MockIntentModelAdapter",
+  "success_criteria": [
+    "el output existe y no está vacío",
+    "la misión completa todos los estados del pipeline"
+  ],
+  "output_format": "text",
+  "required_connectors": [],
+  "scope_in": ["análisis y síntesis"],
+  "scope_out": ["acciones externas"],
+  "steps": [
+    {
+      "order": 1,
+      "description": "Analizar la petición del usuario",
+      "executor": "Orchestrator",
+      "required_connector": null,
+      "permission_class": 0
+    },
+    {
+      "order": 2,
+      "description": "Sintetizar respuesta",
+      "executor": "Orchestrator",
+      "required_connector": null,
+      "permission_class": 0
+    }
+  ],
+  "confidence": 0.9
+}"""
+
+    _VALIDATION_RESPONSE = """{
+  "criteria_results": [
+    {
+      "criterion": "el output existe y no está vacío",
+      "passed": true,
+      "evidence": "output generado correctamente"
+    },
+    {
+      "criterion": "la misión completa todos los estados del pipeline",
+      "passed": true,
+      "evidence": "pipeline ejecutado sin errores"
+    }
+  ],
+  "overall_passed": true,
+  "score": 1.0,
+  "notes": "mock validation passed"
+}"""
+
+    def complete(self, prompt: str) -> str:
+        # Detectar tipo de prompt por contenido del system prompt
+        if '"goal"' in prompt and '"success_criteria"' in prompt:
+            return self._INTENT_RESPONSE
+        if '"criteria_results"' in prompt and '"overall_passed"' in prompt:
+            return self._VALIDATION_RESPONSE
+        return f"[mock-intent-model] Respuesta para: {prompt[:100]}"
+
+
 class DevelopmentModelAdapter:
     """Codex-authored deterministic model for V0 development.
 
