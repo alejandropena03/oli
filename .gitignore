@@ -51,6 +51,7 @@ logs/
 # DBs locales
 *.sqlite
 *.db
+runtime/
 
 # Coverage / tests
 .coverage

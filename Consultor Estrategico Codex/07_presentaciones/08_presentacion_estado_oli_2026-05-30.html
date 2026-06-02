@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>/oli - revision ejecutiva 2026-05-30</title>
+  <style>
+    :root {
+      --void: #0a0a0a;
+      --void-2: #111111;
+      --void-3: #1a1a1a;
+      --platinum: #e8e8e8;
+      --muted: #9a9a9a;
+      --ghost: #3a3a3a;
+      --cyan: #00e5ff;
+      --cyan-dim: #00b8cc;
+      --green: #00ff87;
+      --amber: #ffb800;
+      --red: #ff4545;
+      --porcelain: #f4f2ee;
+      --ink: #151719;
+      --line: #2a2a2a;
+      --font-display: "Space Grotesk", "Segoe UI", Arial, sans-serif;
+      --font-body: Inter, "Segoe UI", Arial, sans-serif;
+      --font-mono: "JetBrains Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      background: #050505;
+      color: var(--platinum);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 20% 10%, rgba(0,229,255,.09), transparent 30%),
+        linear-gradient(180deg, #050505, #0a0a0a 40%, #050505);
+    }
+
+    .deck {
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    .slide {
+      width: min(100vw, 177.777vh);
+      height: min(56.25vw, 100vh);
+      min-height: 640px;
+      margin: 0 auto 28px;
+      padding: 54px 64px;
+      position: relative;
+      overflow: hidden;
+      background: var(--void);
+      border: 1px solid #171717;
+      box-shadow: 0 30px 80px rgba(0,0,0,.45);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .slide.light {
+      background: var(--porcelain);
+      color: var(--ink);
+    }
+
+    .slide:before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,.38), transparent 78%);
+    }
+
+    .light:before {
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.045) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(0,0,0,.04) 1px, transparent 1px);
+    }
+
+    .topline, .footer {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .brand {
+      font-family: var(--font-display);
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      text-transform: lowercase;
+      color: var(--platinum);
+    }
+
+    .light .brand { color: var(--ink); }
+    .slash { color: var(--cyan); }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      align-self: center;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-display);
+      margin: 0;
+      letter-spacing: 0;
+      line-height: .98;
+    }
+
+    h1 {
+      font-size: 82px;
+      max-width: 980px;
+    }
+
+    h2 {
+      font-size: 58px;
+      max-width: 940px;
+    }
+
+    h3 {
+      font-size: 26px;
+      line-height: 1.1;
+    }
+
+    p {
+      font-size: 21px;
+      line-height: 1.45;
+      color: #cfcfcf;
+      max-width: 780px;
+      margin: 22px 0 0;
+    }
+
+    .light p { color: #383b3f; }
+
+    .kicker {
+      font-family: var(--font-mono);
+      color: var(--cyan);
+      font-size: 13px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.03fr .97fr;
+      gap: 42px;
+      align-items: center;
+    }
+
+    .hero-mark {
+      font-family: var(--font-display);
+      font-size: 180px;
+      line-height: .8;
+      font-weight: 800;
+      letter-spacing: -0.08em;
+      color: rgba(232,232,232,.06);
+      position: absolute;
+      right: 52px;
+      top: 118px;
+    }
+
+    .status-card, .panel, .tile, .mock {
+      background: rgba(255,255,255,.035);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+
+    .light .status-card, .light .panel, .light .tile, .light .mock {
+      background: rgba(255,255,255,.7);
+      border-color: rgba(0,0,0,.12);
+      box-shadow: 0 12px 30px rgba(0,0,0,.08);
+    }
+
+    .status-card {
+      padding: 26px;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 26px;
+    }
+
+    .metric {
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px;
+      background: rgba(0,0,0,.18);
+    }
+
+    .metric b {
+      display: block;
+      font-family: var(--font-display);
+      color: var(--cyan);
+      font-size: 40px;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .panel {
+      padding: 25px;
+    }
+
+    .panel .label {
+      font-family: var(--font-mono);
+      color: var(--cyan);
+      font-size: 12px;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .panel ul {
+      margin: 16px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .panel li {
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding: 12px 0;
+      color: #cfcfcf;
+      font-size: 17px;
+      line-height: 1.35;
+    }
+
+    .light .panel li { border-color: rgba(0,0,0,.12); color: #303236; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 30px;
+      padding: 0 11px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--platinum);
+      background: rgba(255,255,255,.04);
+    }
+
+    .light .pill { color: var(--ink); border-color: rgba(0,0,0,.15); background: rgba(255,255,255,.55); }
+    .pill.good { color: var(--green); }
+    .pill.warn { color: var(--amber); }
+    .pill.bad { color: var(--red); }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      margin-top: 34px;
+    }
+
+    .step {
+      min-height: 120px;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      background: rgba(255,255,255,.035);
+      position: relative;
+    }
+
+    .step:before {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: 12px;
+      right: 12px;
+      height: 3px;
+      background: var(--cyan);
+      opacity: .75;
+    }
+
+    .step b {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.28;
+    }
+
+    .route-card {
+      background: #0e0e0e;
+      border: 1px solid #2b2b2b;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .route-head {
+      display: flex;
+      justify-content: space-between;
+      padding: 18px 20px;
+      border-bottom: 1px solid #252525;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .route-body {
+      padding: 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .route-line {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 16px;
+      align-items: start;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    .route-line:last-child { border-bottom: 0; }
+
+    .route-line .key {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: .09em;
+    }
+
+    .route-line .value {
+      color: #e3e3e3;
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .perm {
+      padding: 18px 15px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.035);
+      min-height: 132px;
+    }
+
+    .perm strong {
+      font-family: var(--font-display);
+      display: block;
+      font-size: 36px;
+      color: var(--cyan);
+    }
+
+    .perm b {
+      display: block;
+      margin: 8px 0;
+      font-size: 15px;
+    }
+
+    .perm span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 26px;
+      align-items: center;
+    }
+
+    .large-num {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 132px;
+      line-height: .85;
+      color: var(--cyan);
+    }
+
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .road {
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      min-height: 245px;
+      padding: 18px;
+      background: rgba(255,255,255,.035);
+    }
+
+    .road.active {
+      border-color: rgba(0,229,255,.7);
+      background: rgba(0,229,255,.08);
+    }
+
+    .road .version {
+      font-family: var(--font-mono);
+      color: var(--cyan);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .road b {
+      font-family: var(--font-display);
+      font-size: 21px;
+      line-height: 1.05;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .road span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .quote {
+      font-family: var(--font-display);
+      font-size: 43px;
+      line-height: 1.05;
+      max-width: 920px;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .accent { color: var(--cyan); }
+    .green { color: var(--green); }
+    .amber { color: var(--amber); }
+    .red { color: var(--red); }
+
+    .footer {
+      color: #686868;
+    }
+
+    .light .footer, .light .topline { color: #666; }
+
+    .nav {
+      position: fixed;
+      z-index: 20;
+      right: 22px;
+      bottom: 18px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav a {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.24);
+      border: 1px solid rgba(255,255,255,.25);
+    }
+
+    @media print {
+      body { background: #000; }
+      .slide {
+        width: 100vw;
+        height: 56.25vw;
+        page-break-after: always;
+        margin: 0;
+        box-shadow: none;
+      }
+      .nav { display: none; }
+    }
+
+    @media (max-width: 900px) {
+      .slide { width: 100vw; height: auto; min-height: 100vh; padding: 34px 24px; }
+      h1 { font-size: 56px; }
+      h2 { font-size: 42px; }
+      .hero-grid, .grid-2, .scoreboard { grid-template-columns: 1fr; }
+      .grid-3, .timeline, .matrix, .roadmap { grid-template-columns: 1fr; }
+      .hero-mark { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav" aria-label="slides">
+    <a href="#s1"></a><a href="#s2"></a><a href="#s3"></a><a href="#s4"></a><a href="#s5"></a><a href="#s6"></a><a href="#s7"></a><a href="#s8"></a><a href="#s9"></a><a href="#s10"></a><a href="#s11"></a><a href="#s12"></a>
+  </nav>
+
+  <main class="deck">
+    <section class="slide" id="s1">
+      <div class="topline"><span>Revision ejecutiva</span><span>2026-05-30</span></div>
+      <div class="content hero-grid">
+        <div>
+          <div class="kicker">Estado del proyecto</div>
+          <h1><span class="slash">/</span>oli no necesita otro pitch. Necesita foco.</h1>
+          <p>Analisis orquestado con subagentes: ICP, arquitectura state-of-the-art, diferenciacion y direccion visual.</p>
+        </div>
+        <div class="status-card">
+          <div class="brand"><span class="slash">/</span>oli</div>
+          <p>De intencion a trabajo terminado, con ruta visible, permisos, evidencia y aprendizaje.</p>
+          <div class="metric-row">
+            <div class="metric"><b>45</b><span>tests passing</span></div>
+            <div class="metric"><b>V0.3</b><span>base tecnica</span></div>
+            <div class="metric"><b>0</b><span>Postgres real corriendo</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-mark"><span class="slash">/</span>oli</div>
+      <div class="footer"><span>Consultor Estrategico Codex</span><span>01 / 12</span></div>
+    </section>
+
+    <section class="slide light" id="s2">
+      <div class="topline"><span>Veredicto</span><span>No producto todavia</span></div>
+      <div class="content scoreboard">
+        <div>
+          <div class="large-num">V0.3</div>
+          <h2>Base real. Producto incompleto.</h2>
+        </div>
+        <div class="panel">
+          <div class="label">Lo que si existe</div>
+          <ul>
+            <li>Mission Kernel, API FastAPI, estados, permisos, evidencia, reportes.</li>
+            <li>Misiones: research brief, draft outreach y weekly client report.</li>
+            <li>LangGraph minimo para weekly report con MemorySaver.</li>
+            <li>Model Router minimo y SQLAlchemy store opcional.</li>
+            <li>Contrato automatico: <strong>45 tests passing</strong>.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer"><span>La base se puede defender. La experiencia todavia no.</span><span>02 / 12</span></div>
+    </section>
+
+    <section class="slide" id="s3">
+      <div class="topline"><span>Correccion ICP</span><span>El pitch anterior no sirve</span></div>
+      <div class="content">
+        <div class="kicker">No es "empresas SaaS con agentes"</div>
+        <h2>El wedge comercial es trabajo recurrente de cliente.</h2>
+        <div class="grid-3" style="margin-top:32px">
+          <div class="panel">
+            <div class="label">Paraguas</div>
+            <h3>Trabajo digital + contexto fragmentado</h3>
+            <p class="small">Personas o equipos que necesitan convertir intencion en entregables terminados.</p>
+          </div>
+          <div class="panel">
+            <div class="label">Proving ground</div>
+            <h3>Founders y builders</h3>
+            <p class="small">Buenos para iterar producto; no necesariamente el mejor revenue inicial.</p>
+          </div>
+          <div class="panel">
+            <div class="label">Wedge pagado</div>
+            <h3>Agencias, consultoras y teams pequenos</h3>
+            <p class="small">ROI claro, repeticion, presion de margen y necesidad de entregables auditables.</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span>Fuente: ICP/Moat repo + subagente GTM</span><span>03 / 12</span></div>
+    </section>
+
+    <section class="slide" id="s4">
+      <div class="topline"><span>Problema</span><span>Friccion operacional</span></div>
+      <div class="content grid-2">
+        <div>
+          <div class="kicker">Dolor real</div>
+          <h2>Las agencias no necesitan mas IA. Necesitan menos fabrica manual.</h2>
+          <p>Cada reporte, research, propuesta y seguimiento se repite con variaciones por cliente. Esa repeticion comprime margen y multiplica coordinacion.</p>
+        </div>
+        <div class="route-card">
+          <div class="route-head"><span>/tool-sprawl</span><span class="amber">manual</span></div>
+          <div class="route-body">
+            <div class="route-line"><div class="key">Datos</div><div class="value">Sheets, CRM, ads, correo, notas, calls.</div></div>
+            <div class="route-line"><div class="key">Contexto</div><div class="value">Cada cliente tiene tono, KPIs, historia y excepciones.</div></div>
+            <div class="route-line"><div class="key">Trabajo</div><div class="value">Copiar, pegar, resumir, validar, formatear, aprobar.</div></div>
+            <div class="route-line"><div class="key">Perdida</div><div class="value">Horas no facturables y entregables inconsistentes.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span>El enemigo no es el usuario. Es la friccion.</span><span>04 / 12</span></div>
+    </section>
+
+    <section class="slide light" id="s5">
+      <div class="topline"><span>Tesis</span><span>Categoria</span></div>
+      <div class="content">
+        <div class="quote">Oli es un operador de ejecucion para convertir trabajo recurrente de cliente en misiones auditables y playbooks.</div>
+        <div class="grid-3" style="margin-top:34px">
+          <div class="panel"><div class="label">No dashboard</div><h3>No solo muestra informacion.</h3><p class="small">Conecta dato, decision y entregable.</p></div>
+          <div class="panel"><div class="label">No CRM</div><h3>No solo guarda registros.</h3><p class="small">Recuerda como trabajar para cada cliente.</p></div>
+          <div class="panel"><div class="label">No chatbot</div><h3>No deja el trabajo al usuario.</h3><p class="small">Ejecuta, valida y deja comprobante.</p></div>
+        </div>
+      </div>
+      <div class="footer"><span>Posicionamiento corregido</span><span>05 / 12</span></div>
+    </section>
+
+    <section class="slide" id="s6">
+      <div class="topline"><span>Producto</span><span>Ruta visible</span></div>
+      <div class="content grid-2">
+        <div>
+          <div class="kicker">Primer caso estrella</div>
+          <h2>Weekly client report auditado.</h2>
+          <p>Un flujo simple, repetible y vendible: toma datos, calcula metricas, genera insights, valida criterios y deja reporte listo para revisar.</p>
+          <div style="margin-top:28px; display:flex; gap:10px; flex-wrap:wrap">
+            <span class="pill good">Clase 0/1 prepara</span>
+            <span class="pill warn">Clase 3 envia solo con OK</span>
+            <span class="pill">Playbook candidate</span>
+          </div>
+        </div>
+        <div class="route-card">
+          <div class="route-head"><span>/oli route preview</span><span class="green">validado</span></div>
+          <div class="route-body">
+            <div class="route-line"><div class="key">Objetivo</div><div class="value">Reporte semanal para cliente de agencia.</div></div>
+            <div class="route-line"><div class="key">Herramientas</div><div class="value">Datos de performance + modelo + validadores.</div></div>
+            <div class="route-line"><div class="key">Evidencia</div><div class="value">Input data, metricas, insights, validacion, deliverable.</div></div>
+            <div class="route-line"><div class="key">Salida</div><div class="value">Reporte listo, criterios cumplidos, memoria sugerida.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span>La demo debe mostrar trabajo terminado, no arquitectura desnuda.</span><span>06 / 12</span></div>
+    </section>
+
+    <section class="slide" id="s7">
+      <div class="topline"><span>Como funciona</span><span>Mission Kernel</span></div>
+      <div class="content">
+        <h2>La promesa se vuelve sistema cuando cada mision deja rastro.</h2>
+        <div class="timeline">
+          <div class="step"><b>Intencion</b><span>Entiende el resultado, no solo el prompt.</span></div>
+          <div class="step"><b>Contexto</b><span>Recupera preferencias, cliente y memoria.</span></div>
+          <div class="step"><b>Permisos</b><span>Clasifica impacto antes de tocar sistemas.</span></div>
+          <div class="step"><b>Plan</b><span>Ruta, costo, herramientas y riesgo.</span></div>
+          <div class="step"><b>Ejecucion</b><span>Corre pasos y registra eventos.</span></div>
+          <div class="step"><b>Validacion</b><span>No entrega hasta cumplir criterios.</span></div>
+          <div class="step"><b>Aprendizaje</b><span>Propone memoria y playbook.</span></div>
+        </div>
+      </div>
+      <div class="footer"><span>La conversacion es interfaz. La ejecucion es producto.</span><span>07 / 12</span></div>
+    </section>
+
+    <section class="slide light" id="s8">
+      <div class="topline"><span>State of the art</span><span>Brechas criticas</span></div>
+      <div class="content">
+        <h2>Bien orientados. Aun no state-of-the-art operativo.</h2>
+        <div class="grid-2" style="margin-top:30px">
+          <div class="panel">
+            <div class="label">Correcto</div>
+            <ul>
+              <li>LangGraph como runtime de misiones.</li>
+              <li>Postgres + pgvector como una sola memoria/estado.</li>
+              <li>Permisos, evidencia, costos y validation result.</li>
+              <li>OpenAI-compatible adapter para vLLM/Ollama/API.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <div class="label">No suficiente</div>
+            <ul>
+              <li>Sin Postgres real ni PostgresSaver.</li>
+              <li>Sin HITL durable en LangGraph.</li>
+              <li>Sin memoria pgvector ni retrieval real.</li>
+              <li>Sin evals, replay, security package ni model registry.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span>El TDD tiene buena direccion; necesita actualizar decisiones obsoletas.</span><span>08 / 12</span></div>
+    </section>
+
+    <section class="slide" id="s9">
+      <div class="topline"><span>Decisiones a corregir</span><span>2026-05-30</span></div>
+      <div class="content grid-2">
+        <div>
+          <h2>El TDD debe elegir excelencia visible, no inercia.</h2>
+          <p>La constitucion dice investigar antes de asumir. Eso aplica al stack: si la mejor ruta cambio, Oli debe mostrarlo.</p>
+        </div>
+        <div class="panel">
+          <div class="label">Correcciones recomendadas</div>
+          <ul>
+            <li><strong>PostgreSQL:</strong> 18 recomendado; compatibilidad 16+.</li>
+            <li><strong>pgvector:</strong> resolver V0 vs V1. Si memoria es moat, entra temprano.</li>
+            <li><strong>Modelos:</strong> no defaults congelados; registry + benchmarks.</li>
+            <li><strong>Seguridad:</strong> tool scopes, taint, audit y credential broker antes de tools reales.</li>
+            <li><strong>Evals:</strong> golden tasks, replay y adversarial tests antes de fine-tuning.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer"><span>State-of-the-art no es moda. Es deber operativo.</span><span>09 / 12</span></div>
+    </section>
+
+    <section class="slide" id="s10">
+      <div class="topline"><span>Diferenciadores</span><span>Moat practico</span></div>
+      <div class="content">
+        <h2>Oli gana si convierte cada run en activo acumulado.</h2>
+        <div class="grid-3" style="margin-top:30px">
+          <div class="panel"><div class="label">V0</div><h3>Comprobante de mision</h3><p class="small">Que hizo, con que datos, cuanto costo, que valido y que queda pendiente.</p></div>
+          <div class="panel"><div class="label">V1</div><h3>Memoria por cliente</h3><p class="small">KPIs, tono, excepciones, entregables pasados y correcciones.</p></div>
+          <div class="panel"><div class="label">V1</div><h3>Playbook candidate</h3><p class="small">Trabajo repetido deja de ser tarea y se vuelve sistema.</p></div>
+          <div class="panel"><div class="label">V1</div><h3>Mission replay</h3><p class="small">Caja negra: input, plan, tool calls, modelo, errores y validadores.</p></div>
+          <div class="panel"><div class="label">V2</div><h3>Evidence drawer</h3><p class="small">Fuentes, calculos, screenshots, permisos y ruta expandible.</p></div>
+          <div class="panel"><div class="label">V2</div><h3>Comparacion entre runs</h3><p class="small">Menos tiempo, menor costo, mas validacion, mejor playbook.</p></div>
+        </div>
+      </div>
+      <div class="footer"><span>El moat no es el modelo. Es memoria + evidencia + playbooks + routing.</span><span>10 / 12</span></div>
+    </section>
+
+    <section class="slide light" id="s11">
+      <div class="topline"><span>Plan de revision</span><span>Desde 2026-05-30</span></div>
+      <div class="content">
+        <h2>Plan recomendado: foco antes que expansion.</h2>
+        <div class="roadmap">
+          <div class="road active"><div class="version">Ahora</div><b>Congelar nuevas features</b><span>Resolver Postgres y corregir TDD: Postgres 18 recomendado, compatible 16+.</span></div>
+          <div class="road"><div class="version">P0</div><b>Persistencia durable</b><span>Migraciones, PostgresSaver, eventos, approvals y audit trail.</span></div>
+          <div class="road"><div class="version">P0</div><b>Memoria minima</b><span>memory_entries + pgvector + retrieval en retrieve_context.</span></div>
+          <div class="road"><div class="version">P1</div><b>Evals y seguridad</b><span>Replay, golden tasks, prompt injection, tool scopes y broker stub.</span></div>
+          <div class="road"><div class="version">P1</div><b>Demo vendible</b><span>Weekly client report auditado como primer producto visible.</span></div>
+        </div>
+      </div>
+      <div class="footer"><span>No construir UI grande hasta que el runtime deje evidencia real.</span><span>11 / 12</span></div>
+    </section>
+
+    <section class="slide" id="s12">
+      <div class="topline"><span>Pitch 1 minuto</span><span>Corregido por ICP</span></div>
+      <div class="content">
+        <div class="kicker">Narrativa ejecutiva</div>
+        <h2>Los dashboards muestran. Los CRMs guardan. Los chatbots responden. <span class="accent">Oli termina trabajo.</span></h2>
+        <p>Oli es un operador de ejecucion para agencias, consultoras y equipos pequenos que repiten trabajo digital valioso entre clientes, herramientas y entregables. Le dices el resultado: prepara el reporte semanal, convierte estas notas en propuesta, investiga competidores o arma un draft de outreach. Oli entiende la mision, recupera contexto, arma un plan, clasifica permisos, ejecuta, valida y deja un comprobante. Si el trabajo se repite, lo convierte en playbook. Si hay impacto externo, pide aprobacion. Si algo falla, queda trazado.</p>
+        <div style="margin-top:30px; display:flex; gap:12px; flex-wrap:wrap">
+          <span class="pill good">Trabajo terminado</span>
+          <span class="pill">Evidencia</span>
+          <span class="pill">Permisos</span>
+          <span class="pill">Memoria</span>
+          <span class="pill">Playbooks</span>
+        </div>
+      </div>
+      <div class="footer"><span>/oli - mira como lo hice</span><span>12 / 12</span></div>
+    </section>
+  </main>
+</body>
+</html>

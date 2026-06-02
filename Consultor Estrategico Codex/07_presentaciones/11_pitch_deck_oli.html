@@ -1,0 +1,977 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>/oli pitch deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void: #0A0A0A;
+      --surface: #111111;
+      --surface-2: #1A1A1A;
+      --surface-3: #222222;
+      --border: #2A2A2A;
+      --border-bright: #3A3A3A;
+      --platinum: #E8E8E8;
+      --platinum-mid: #C0C0C0;
+      --platinum-dim: #9A9A9A;
+      --platinum-ghost: #3A3A3A;
+      --cyan: #00E5FF;
+      --cyan-dim: #00B8CC;
+      --cyan-ghost: #00E5FF1A;
+      --green: #00FF87;
+      --green-ghost: #00FF871A;
+      --amber: #FFB800;
+      --amber-ghost: #FFB8001A;
+      --red: #FF4545;
+      --red-ghost: #FF45451A;
+      --display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+      --body: "Inter", "Helvetica Neue", Arial, sans-serif;
+      --mono: "JetBrains Mono", "Courier New", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      background: #000;
+      color: var(--platinum);
+      font-family: var(--body);
+      overflow: hidden;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    #stage {
+      position: fixed;
+      inset: 0;
+      width: 1280px;
+      height: 720px;
+      transform-origin: top left;
+      background:
+        radial-gradient(circle at 82% 12%, rgba(0, 229, 255, 0.08), transparent 28%),
+        linear-gradient(180deg, #0A0A0A 0%, #070707 100%);
+      overflow: hidden;
+    }
+
+    #stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(232,232,232,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,232,232,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.72), rgba(0,0,0,0.18));
+    }
+
+    #stage::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 56px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: 0.56;
+    }
+
+    .nav {
+      position: absolute;
+      z-index: 20;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 42px;
+      border-bottom: 1px solid rgba(232,232,232,0.06);
+      background: rgba(10,10,10,0.88);
+      backdrop-filter: blur(12px);
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-wrap img {
+      width: 112px;
+      height: auto;
+      display: block;
+    }
+
+    .nav-meta,
+    .counter {
+      font-family: var(--mono);
+      color: var(--platinum-dim);
+      font-size: 12px;
+    }
+
+    .counter .current {
+      color: var(--cyan);
+    }
+
+    .slides {
+      position: absolute;
+      top: 56px;
+      left: 0;
+      right: 0;
+      bottom: 46px;
+      z-index: 5;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      padding: 56px 68px 46px;
+      transition: opacity 220ms ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .footer {
+      position: absolute;
+      z-index: 20;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 42px;
+      border-top: 1px solid rgba(232,232,232,0.06);
+      background: rgba(10,10,10,0.88);
+    }
+
+    .footer .hint {
+      font-family: var(--mono);
+      color: var(--platinum-dim);
+      font-size: 11px;
+    }
+
+    .footer .hint span {
+      color: var(--cyan);
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border-bright);
+      background: var(--surface);
+      color: var(--platinum);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .icon-btn:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .progress {
+      position: absolute;
+      left: 0;
+      bottom: 45px;
+      height: 2px;
+      background: var(--cyan);
+      box-shadow: 0 0 12px rgba(0,229,255,0.7);
+      transition: width 220ms ease;
+      z-index: 30;
+    }
+
+    .kicker {
+      font-family: var(--mono);
+      color: var(--cyan);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      margin-bottom: 6px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-family: var(--display);
+      font-size: 76px;
+      line-height: 0.94;
+      font-weight: 700;
+      max-width: 980px;
+    }
+
+    h2 {
+      font-family: var(--display);
+      font-size: 52px;
+      line-height: 1;
+      font-weight: 700;
+      max-width: 1020px;
+    }
+
+    h3 {
+      font-family: var(--display);
+      font-size: 23px;
+      line-height: 1.16;
+      font-weight: 600;
+    }
+
+    p {
+      color: var(--platinum-dim);
+      font-size: 20px;
+      line-height: 1.48;
+      max-width: 900px;
+    }
+
+    .small {
+      color: var(--platinum-dim);
+      font-size: 15px;
+      line-height: 1.48;
+    }
+
+    .mono {
+      font-family: var(--mono);
+    }
+
+    .cyan {
+      color: var(--cyan);
+    }
+
+    .green {
+      color: var(--green);
+    }
+
+    .dim {
+      color: var(--platinum-dim);
+    }
+
+    .hero-lockup {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 52px;
+      align-items: center;
+    }
+
+    .hero-logo {
+      width: 204px;
+      margin-bottom: 34px;
+    }
+
+    .hero-sub {
+      font-size: 23px;
+      max-width: 720px;
+    }
+
+    .terminal {
+      border: 1px solid var(--border-bright);
+      background: linear-gradient(180deg, rgba(26,26,26,0.96), rgba(12,12,12,0.96));
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.34);
+    }
+
+    .terminal-head {
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--platinum-dim);
+      font-family: var(--mono);
+      font-size: 12px;
+      background: var(--surface);
+    }
+
+    .terminal-body {
+      padding: 18px;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.72;
+      color: var(--platinum-mid);
+    }
+
+    .terminal-line {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      border-bottom: 1px solid rgba(232,232,232,0.05);
+      padding: 6px 0;
+    }
+
+    .terminal-line:last-child {
+      border-bottom: 0;
+    }
+
+    .prompt {
+      color: var(--cyan);
+      flex: 0 0 auto;
+    }
+
+    .ok {
+      color: var(--green);
+    }
+
+    .warn {
+      color: var(--amber);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: rgba(17,17,17,0.86);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 22px;
+      min-height: 152px;
+    }
+
+    .panel.cyan-panel {
+      border-color: rgba(0,229,255,0.34);
+      background: linear-gradient(180deg, rgba(0,229,255,0.08), rgba(17,17,17,0.86));
+    }
+
+    .panel.success-panel {
+      border-color: rgba(0,255,135,0.26);
+      background: linear-gradient(180deg, rgba(0,255,135,0.06), rgba(17,17,17,0.86));
+    }
+
+    .panel.warning-panel {
+      border-color: rgba(255,184,0,0.26);
+      background: linear-gradient(180deg, rgba(255,184,0,0.06), rgba(17,17,17,0.86));
+    }
+
+    .panel .label {
+      font-family: var(--mono);
+      color: var(--cyan);
+      font-size: 11px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .panel p {
+      font-size: 15px;
+      line-height: 1.48;
+    }
+
+    .metric {
+      font-family: var(--display);
+      font-size: 42px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--platinum);
+      margin-bottom: 10px;
+    }
+
+    .route {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .route-step {
+      position: relative;
+      border: 1px solid var(--border-bright);
+      border-radius: 8px;
+      background: rgba(17,17,17,0.92);
+      padding: 14px;
+      min-height: 138px;
+    }
+
+    .route-step::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -12px;
+      width: 12px;
+      height: 1px;
+      background: var(--cyan);
+    }
+
+    .route-step:last-child::after {
+      display: none;
+    }
+
+    .route-step b {
+      display: block;
+      color: var(--platinum);
+      font-family: var(--display);
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .route-step span {
+      display: block;
+      color: var(--platinum-dim);
+      font-size: 12px;
+      line-height: 1.36;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .layer {
+      display: grid;
+      grid-template-columns: 220px 1fr 130px;
+      align-items: center;
+      gap: 16px;
+      border: 1px solid var(--border-bright);
+      border-radius: 8px;
+      background: rgba(17,17,17,0.88);
+      padding: 14px 16px;
+    }
+
+    .layer b {
+      font-family: var(--display);
+      color: var(--platinum);
+      font-size: 17px;
+    }
+
+    .layer span {
+      color: var(--platinum-dim);
+      font-size: 14px;
+      line-height: 1.38;
+    }
+
+    .badge {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 10px;
+      border: 1px solid var(--border-bright);
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--platinum-mid);
+      white-space: nowrap;
+    }
+
+    .badge.cyan-badge {
+      color: var(--cyan);
+      border-color: rgba(0,229,255,0.36);
+      background: var(--cyan-ghost);
+    }
+
+    .badge.green-badge {
+      color: var(--green);
+      border-color: rgba(0,255,135,0.34);
+      background: var(--green-ghost);
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--border-bright);
+      border-radius: 8px;
+      background: rgba(17,17,17,0.88);
+      font-size: 14px;
+    }
+
+    .table th,
+    .table td {
+      text-align: left;
+      vertical-align: top;
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--platinum-dim);
+      line-height: 1.36;
+    }
+
+    .table th {
+      color: var(--platinum);
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      background: rgba(232,232,232,0.04);
+    }
+
+    .table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .table strong {
+      color: var(--platinum);
+    }
+
+    .receipt {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .receipt-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      background: rgba(10,10,10,0.34);
+      min-height: 94px;
+    }
+
+    .receipt-item b {
+      display: block;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--cyan);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .receipt-item span {
+      color: var(--platinum-dim);
+      font-size: 14px;
+      line-height: 1.36;
+      display: block;
+    }
+
+    .quote {
+      border-left: 3px solid var(--cyan);
+      padding-left: 24px;
+      font-size: 34px;
+      line-height: 1.18;
+      font-family: var(--display);
+      font-weight: 600;
+      max-width: 980px;
+    }
+
+    .ask {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .source-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .source-list a {
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      color: var(--platinum-mid);
+      text-decoration: none;
+      font-size: 13px;
+      line-height: 1.4;
+      background: rgba(17,17,17,0.82);
+    }
+
+    .source-list a:hover {
+      color: var(--cyan);
+      border-color: rgba(0,229,255,0.34);
+    }
+
+    .wide {
+      max-width: 1120px;
+    }
+  </style>
+</head>
+<body>
+  <main id="stage" aria-label="/oli pitch deck">
+    <header class="nav">
+      <div class="logo-wrap">
+        <img src="../brand/logos/route-a-wordmark/full-dark.svg" alt="/oli" />
+        <div class="nav-meta">pitch deck · brand aligned</div>
+      </div>
+      <div class="counter"><span class="current">01</span> / <span class="total">13</span></div>
+    </header>
+
+    <section class="slides">
+      <article class="slide active">
+        <div class="hero-lockup">
+          <div>
+            <img class="hero-logo" src="../brand/logos/route-a-wordmark/full-dark.svg" alt="/oli" />
+            <div class="kicker">execution layer</div>
+            <h1>No es otro chat. Es trabajo terminado.</h1>
+            <p class="hero-sub">/oli convierte voz e intencion en ejecucion digital: planifica, elige herramientas, opera terminales, conecta apps, verifica y entrega con permisos, costo y evidencia visibles.</p>
+          </div>
+          <div class="terminal" aria-label="execution trace">
+            <div class="terminal-head">
+              <span>/oli.run</span>
+              <span class="cyan">route visible</span>
+            </div>
+            <div class="terminal-body">
+              <div class="terminal-line"><span class="prompt">$</span><span>usuario: "crea mi sistema de ventas b2b"</span></div>
+              <div class="terminal-line"><span class="prompt">01</span><span>intake incompleto detectado. Oli pide solo lo minimo.</span></div>
+              <div class="terminal-line"><span class="prompt">02</span><span>elige stack por valor: Attio, Apollo, Gmail, Calendar, Looker, GitHub.</span></div>
+              <div class="terminal-line"><span class="prompt">03</span><span>genera plan, conectores, automatizacion y backlog tecnico.</span></div>
+              <div class="terminal-line"><span class="ok">done</span><span>entrega comprobante de ejecucion y proximas aprobaciones.</span></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">the problem</div>
+        <h2>La IA responde mejor que nunca. Pero el trabajo sigue partido en pestañas, herramientas y manos humanas.</h2>
+        <div class="grid-3">
+          <div class="panel">
+            <div class="label">fragmentacion</div>
+            <h3>Muchas apps, poca direccion</h3>
+            <p>CRM, correo, hojas, docs, terminal, repos, calendario y datos viven separados. El usuario coordina todo manualmente.</p>
+          </div>
+          <div class="panel">
+            <div class="label">opacidad</div>
+            <h3>La caja negra no escala</h3>
+            <p>Los agentes que prometen autonomia sin mostrar ruta, costo, permisos y riesgo no generan confianza operativa.</p>
+          </div>
+          <div class="panel">
+            <div class="label">barrera tecnica</div>
+            <h3>Saber pedir no basta</h3>
+            <p>La persona no tecnica puede describir el resultado, pero no sabe convertirlo en sistema, automatizacion o codigo mantenible.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">the insight</div>
+        <div class="quote">Tu computador deberia trabajar mas que tu. La conversacion no es el producto: es la entrada para ejecutar.</div>
+        <div class="route">
+          <div class="route-step"><b>Hablar</b><span>Wake word, texto o voz natural. Sin aprender menus.</span></div>
+          <div class="route-step"><b>Entender</b><span>Intencion, restricciones, contexto y datos disponibles.</span></div>
+          <div class="route-step"><b>Planear</b><span>Ruta, herramientas, permisos, costo y riesgo.</span></div>
+          <div class="route-step"><b>Ejecutar</b><span>Apps, APIs, terminal, archivos, navegador y agentes.</span></div>
+          <div class="route-step"><b>Verificar</b><span>Tests, checks, evidencia y revision humana cuando aplica.</span></div>
+          <div class="route-step"><b>Entregar</b><span>Resultado, logs, costo y flujo reutilizable.</span></div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">product</div>
+        <h2>/oli es una capa de ejecucion AI-first para operar herramientas, modelos, archivos y terminales.</h2>
+        <div class="grid-4">
+          <div class="panel cyan-panel">
+            <div class="metric">01</div>
+            <h3>Asistente operativo</h3>
+            <p>El usuario pide resultados, no pasos. /oli traduce intencion en plan ejecutable.</p>
+          </div>
+          <div class="panel cyan-panel">
+            <div class="metric">02</div>
+            <h3>Builder sin barrera tecnica</h3>
+            <p>Construye automatizaciones, herramientas internas, dashboards, flujos y software.</p>
+          </div>
+          <div class="panel cyan-panel">
+            <div class="metric">03</div>
+            <h3>Router de valor</h3>
+            <p>Decide entre open source, premium, local o cloud segun calidad, costo y riesgo.</p>
+          </div>
+          <div class="panel success-panel">
+            <div class="metric green">04</div>
+            <h3>Evidencia final</h3>
+            <p>Cierra cada mision con comprobante: que hizo, cuanto costo, que falta aprobar.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">user story</div>
+        <h2>Paquete Teams: "creame el sistema de automatizacion de ventas B2B".</h2>
+        <div class="split">
+          <div>
+            <p class="wide">El usuario no tiene CRM, no tiene base de leads, no tiene automatizaciones y solo tiene Gmail empresarial, creditos de Claude Code y paquete basico. /oli no responde con una lista de herramientas. Arranca una mision guiada.</p>
+            <div style="height: 22px"></div>
+            <div class="receipt">
+              <div class="receipt-item"><b>intake minimo</b><span>Sector, ticket, pais, ICP aproximado, tono comercial y limites de contacto.</span></div>
+              <div class="receipt-item"><b>stack recomendado</b><span>Attio para CRM, Apollo para base comercial, Gmail para envio, Calendar para reuniones.</span></div>
+              <div class="receipt-item"><b>conexiones</b><span>OAuth, API keys, permisos por accion y sandbox antes de tocar datos reales.</span></div>
+              <div class="receipt-item"><b>entregables</b><span>Pipeline, scoring, secuencias, dashboard, backlog y automatizaciones auditables.</span></div>
+            </div>
+          </div>
+          <div class="terminal">
+            <div class="terminal-head"><span>mission.sales_b2b</span><span class="cyan">human approval gates</span></div>
+            <div class="terminal-body">
+              <div class="terminal-line"><span class="prompt">wake</span><span>Oli escucha, transcribe y normaliza la solicitud.</span></div>
+              <div class="terminal-line"><span class="prompt">route</span><span>modelo local/cloud razona; tools ejecutan desde runtime seguro.</span></div>
+              <div class="terminal-line"><span class="prompt">tool</span><span>crm.create_schema: companies, people, deals, activities.</span></div>
+              <div class="terminal-line"><span class="prompt">tool</span><span>apollo.search: ICP + enriquecimiento + validacion.</span></div>
+              <div class="terminal-line"><span class="prompt">tool</span><span>gmail.draft_sequence: no envia sin aprobacion.</span></div>
+              <div class="terminal-line"><span class="ok">done</span><span>sistema listo en staging operativo.</span></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">architecture</div>
+        <h2>El modelo no toca el computador por magia. Decide. Las herramientas ejecutan.</h2>
+        <div class="architecture">
+          <div class="layer"><b>Cliente /oli</b><span>Voz, texto, UI de mision, estado, aprobaciones, comprobantes.</span><span class="badge cyan-badge">user side</span></div>
+          <div class="layer"><b>Mission graph</b><span>LangGraph orquesta intake, plan, tool routing, ejecucion, verificacion y cierre.</span><span class="badge cyan-badge">orchestrator</span></div>
+          <div class="layer"><b>Model router</b><span>Usa el modelo adecuado para razonar, escribir, codificar o clasificar. Open cuando conviene, premium cuando devuelve valor.</span><span class="badge">policy</span></div>
+          <div class="layer"><b>Tool runtime</b><span>APIs, navegador, terminal, archivos, GitHub, correo, calendar, CRM, workers y sandboxes.</span><span class="badge">actions</span></div>
+          <div class="layer"><b>Memory + audit</b><span>Preferencias, negocio, flujos reutilizables, costos, logs, permisos y evidencias.</span><span class="badge green-badge">done states</span></div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">tool routing</div>
+        <h2>La pregunta clave no es "que modelo usamos". Es "que ruta produce mas valor con menos desperdicio razonable".</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Tipo de tarea</th>
+              <th>Ruta preferida</th>
+              <th>Por que</th>
+              <th>Control</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Arquitectura / decisiones</strong></td><td>Modelo fuerte premium o cloud GPU</td><td>El costo de una mala decision es mayor que tokens caros.</td><td>Decision log</td></tr>
+            <tr><td><strong>Clasificacion masiva</strong></td><td>Modelo open source barato</td><td>Volumen alto, riesgo bajo, formato repetible.</td><td>Eval + muestra humana</td></tr>
+            <tr><td><strong>Codigo en repo</strong></td><td>Agente coding con terminal sandbox</td><td>Debe leer archivos, editar, correr tests y dejar diff.</td><td>PR + tests</td></tr>
+            <tr><td><strong>Emails comerciales</strong></td><td>LLM + Gmail drafts</td><td>Puede generar, pero no enviar masivo sin aprobacion.</td><td>Human gate</td></tr>
+            <tr><td><strong>Automatizaciones</strong></td><td>API primero, navegador segundo, RPA ultimo</td><td>Mas estable, auditable y mantenible.</td><td>Logs + rollback</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">wedge</div>
+        <h2>Primer ICP: gente con dolor economico inmediato, no curiosos de IA.</h2>
+        <div class="grid-3">
+          <div class="panel cyan-panel">
+            <div class="label">founders y equipos pequenos</div>
+            <h3>Quieren construir y vender sin contratar un equipo para cada experimento.</h3>
+            <p>Compran velocidad, entregables y reduccion de dependencia tecnica.</p>
+          </div>
+          <div class="panel">
+            <div class="label">consultores y agencias</div>
+            <h3>Viven de producir entregables personalizados con margen presionado.</h3>
+            <p>Compran produccion repetible, playbooks y automatizacion por cliente.</p>
+          </div>
+          <div class="panel">
+            <div class="label">operaciones / growth</div>
+            <h3>Tienen procesos repetitivos y herramientas que no se hablan.</h3>
+            <p>Compran control, trazabilidad y sistemas que eliminan pasos manuales.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">positioning</div>
+        <h2>/oli no compite como chatbot. Compite contra el trabajo manual entre herramientas.</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Categoria</th>
+              <th>Promesa</th>
+              <th>Falla comun</th>
+              <th>Respuesta /oli</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Chatbots</strong></td><td>Responder y redactar</td><td>Dejan la ejecucion al usuario</td><td>Conversar solo para ejecutar mejor</td></tr>
+            <tr><td><strong>Coding agents</strong></td><td>Editar codigo</td><td>Dev-first, repo-first</td><td>Codigo como una herramienta mas, no el producto completo</td></tr>
+            <tr><td><strong>No-code / RPA</strong></td><td>Automatizar flujos</td><td>Fragilidad y mantenimiento manual</td><td>Flujos generados, versionados y auditados desde intencion</td></tr>
+            <tr><td><strong>Suites</strong></td><td>Centralizar trabajo</td><td>Jardines cerrados</td><td>Orquestacion modular: local, open, premium y cloud</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">business model</div>
+        <h2>Modelo comercial: cobrar por capacidad operativa, no por "mensajes".</h2>
+        <div class="grid-3">
+          <div class="panel">
+            <div class="label">starter</div>
+            <h3>Individuos productivos</h3>
+            <p>Misiones personales, conectores basicos, ejecuciones limitadas, comprobantes y memoria ligera.</p>
+          </div>
+          <div class="panel cyan-panel">
+            <div class="label">teams</div>
+            <h3>Equipos que quieren sistemas</h3>
+            <p>CRM, ventas, ops, coding, permisos por rol, flujos reutilizables y creditos de ejecucion.</p>
+          </div>
+          <div class="panel">
+            <div class="label">enterprise</div>
+            <h3>Gobernanza y control</h3>
+            <p>Runtime dedicado, auditoria, SSO, politicas de datos, modelos privados y aprobaciones configurables.</p>
+          </div>
+        </div>
+        <p class="small">La unidad de valor no es prompt. Es mision ejecutada con trazabilidad.</p>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">moat</div>
+        <h2>La defensa de /oli no es un modelo. Es la capa de ejecucion aprendiendo que rutas producen trabajo real.</h2>
+        <div class="grid-4">
+          <div class="panel"><div class="label">memory</div><h3>Contexto de usuario y negocio</h3><p>Preferencias, stack, restricciones, tono, objetivos y activos disponibles.</p></div>
+          <div class="panel"><div class="label">playbooks</div><h3>Misiones reutilizables</h3><p>Ventas B2B, reportes, research, automatizaciones, software interno.</p></div>
+          <div class="panel"><div class="label">routing data</div><h3>Decision intelligence</h3><p>Que modelo, herramienta y ruta funciono mejor por tarea, costo y riesgo.</p></div>
+          <div class="panel success-panel"><div class="label">proof</div><h3>Comprobante de ejecucion</h3><p>Logs, evidencias, costos, permisos y resultados verificables.</p></div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">roadmap</div>
+        <h2>La V0 debe probar una cosa: /oli puede recibir una intencion amplia y convertirla en sistema ejecutable.</h2>
+        <div class="route">
+          <div class="route-step"><b>V0</b><span>Mission graph, UI, router simulado/real, OpenRouter, logs y comprobante.</span></div>
+          <div class="route-step"><b>V0.1</b><span>Conectores: Gmail, GitHub, archivos, browser y CRM sandbox.</span></div>
+          <div class="route-step"><b>V0.2</b><span>Sales B2B mission: Attio + Apollo + Gmail + Calendar.</span></div>
+          <div class="route-step"><b>V1</b><span>Runtime cloud GPU para modelos open source y workers persistentes.</span></div>
+          <div class="route-step"><b>V1.5</b><span>Marketplace de playbooks, evals y rutas de valor por industria.</span></div>
+          <div class="route-step"><b>V2</b><span>Operacion AI-first de equipos con permisos, auditoria y control.</span></div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">one minute pitch</div>
+        <h2>/oli. La barra que convierte una idea en ejecucion.</h2>
+        <div class="ask">
+          <div class="panel cyan-panel">
+            <h3>Pitch de 60 segundos</h3>
+            <p>/oli es una capa de ejecucion AI-first. No vende otro chat: convierte intencion humana en trabajo digital terminado. El usuario puede decir "creame un sistema de ventas B2B" y /oli entiende el objetivo, pide solo los datos necesarios, elige herramientas, conecta CRM, datos, correo, calendario, terminal y modelos, ejecuta con permisos y entrega evidencia. La diferencia es transparencia: muestra que modelo uso, que herramienta toco, cuanto costo y que requiere aprobacion humana. El primer mercado son founders, equipos pequenos, consultores y operaciones que ya sienten el costo de trabajar entre herramientas desconectadas. La vision es simple: que el computador deje de esperar instrucciones perfectas y empiece a trabajar por resultados.</p>
+          </div>
+          <div class="panel">
+            <div class="label">ask inmediato</div>
+            <h3>Construir el demo que no se puede explicar con slides.</h3>
+            <p>Una mision completa: "crea mi sistema de automatizacion de ventas B2B". Conecta herramientas reales en sandbox, muestra ruta, ejecuta acciones, pide aprobaciones y entrega comprobante.</p>
+            <div style="height: 18px"></div>
+            <span class="badge cyan-badge">north star</span>
+            <span class="badge green-badge">mision ejecutada</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">sources inside repo</div>
+        <h2>Este deck queda alineado al brand real de /oli.</h2>
+        <div class="source-list">
+          <a href="../brand/brandbook/index.html">brand/brandbook/index.html<br>Pragmatic Void, uso de wordmark, cian estructural, verde solo para done states.</a>
+          <a href="../brand/tokens/colors.css">brand/tokens/colors.css<br>Void, surface, platinum, cyan, green y reglas semanticas.</a>
+          <a href="../brand/tokens/typography.css">brand/tokens/typography.css<br>Space Grotesk, JetBrains Mono, Inter y regla de wordmark.</a>
+          <a href="../oli_lenguaje_de_marca_v0_1.md">oli_lenguaje_de_marca_v0_1.md<br>Capa de ejecucion AI-first, voz, promesa, ICP y transparencia.</a>
+          <a href="../tdd/domain/langgraph-mission-graph.md">tdd/domain/langgraph-mission-graph.md<br>Mission graph, orquestacion y tratamiento de misiones.</a>
+          <a href="../tdd/domain/oli-constitution.md">tdd/domain/oli-constitution.md<br>Principios operativos, limites y forma de construir /oli.</a>
+        </div>
+      </article>
+    </section>
+
+    <div class="progress" aria-hidden="true"></div>
+    <footer class="footer">
+      <div class="hint"><span>← / →</span> navegar · <span>f</span> pantalla completa</div>
+      <div class="controls">
+        <button class="icon-btn" id="prev" aria-label="Anterior">‹</button>
+        <button class="icon-btn" id="next" aria-label="Siguiente">›</button>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    const stage = document.getElementById("stage");
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const current = document.querySelector(".current");
+    const total = document.querySelector(".total");
+    const progress = document.querySelector(".progress");
+    const prev = document.getElementById("prev");
+    const next = document.getElementById("next");
+    let index = 0;
+
+    total.textContent = String(slides.length).padStart(2, "0");
+
+    function fitStage() {
+      const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+      stage.style.transform = `scale(${scale})`;
+      stage.style.left = `${(window.innerWidth - 1280 * scale) / 2}px`;
+      stage.style.top = `${(window.innerHeight - 720 * scale) / 2}px`;
+    }
+
+    function render() {
+      slides.forEach((slide, i) => slide.classList.toggle("active", i === index));
+      current.textContent = String(index + 1).padStart(2, "0");
+      progress.style.width = `${((index + 1) / slides.length) * 1280}px`;
+      prev.disabled = index === 0;
+      next.disabled = index === slides.length - 1;
+    }
+
+    function go(delta) {
+      index = Math.max(0, Math.min(slides.length - 1, index + delta));
+      render();
+    }
+
+    prev.addEventListener("click", () => go(-1));
+    next.addEventListener("click", () => go(1));
+    window.addEventListener("resize", fitStage);
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === "PageDown" || event.key === " ") go(1);
+      if (event.key === "ArrowLeft" || event.key === "PageUp") go(-1);
+      if (event.key.toLowerCase() === "f") {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+      }
+    });
+
+    fitStage();
+    render();
+  </script>
+</body>
+</html>

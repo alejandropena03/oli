@@ -26,3 +26,5 @@ export * from "./playbook"
 
 // ── Suboperators ──────────────────────────────────────────────────────────────
 export * from "./suboperator"
+export * from "./subagent_contracts"
+export * from "./decision_memo"

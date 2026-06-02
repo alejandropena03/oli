@@ -45,13 +45,19 @@ tdd/
 │   ├── tools-catalog.md        → 10 herramientas núcleo con ejemplos
 │   ├── promise-validation.md   → Demostración de la promesa
 │   ├── connectivity-map.md     → Jerarquía de decisión de conectividad
+│   ├── state-of-art-discovery.md → Decision memos actuales con evidencia y buildability
+│   ├── state-of-art-evals.md     → Evals de recomendaciones no flojas
+│   ├── subagent-engineering.md   → MissionClass, AgentTaskContract, ContextPacket, TopologyDecision
+│   ├── subagent-evals.md         → Eval plan para topologías de subagentes
 │   └── setup-wizard-spec.md    → Instalación y configuración de hardware
 ├── schemas/                    → Contratos de datos (TypeScript como especificación)
 │   ├── mission.ts              → Agregado principal — 18 estados, plan, repair, evidence
 │   ├── memory.ts               → 3 capas de memoria, MemoryGraph interface
 │   ├── tool.ts                 → 14 transports, permissions, configs
 │   ├── playbook.ts             → Playbook, variables, steps
-│   └── suboperator.ts          → 8 suboperadores, contratos de output
+│   ├── suboperator.ts          → 8 suboperadores, contratos de output
+│   ├── subagent_contracts.ts   → MissionClass, ContextPacket, TaskResult, TopologyDecision
+│   └── decision_memo.ts        → State-of-the-art decision memo contract
 ├── slices/
 │   ├── slice-001-research-brief.md → Misión simple end-to-end en papel
 │   └── slice-002-sales-automation.md → Misión compleja con construcción de sistema
@@ -81,6 +87,11 @@ la estructura — no son el código de producción.
 | Slice-002: Sales Automation | ✅ en papel | Misión compleja — 2 gaps identificados |
 | Setup Wizard | ✅ completo | 5 pasos, 4 perfiles de hardware |
 | Promise Validation | ✅ completo | Cada capacidad demostrada |
+| AI Engineering Skill Signal | moved | Movido a Consultor Estrategico Codex/02_estrategia_producto/ — es estratégico, no TDD core |
+| Subagent Engineering | ✅ accepted | Contratos, topologias y roles canonicos (ADR-023) |
+| Subagent Evals | eval plan | Baseline single-agent vs topologias candidatas |
+| State-of-Art Discovery | ✅ accepted | Decision memos con evidencia, source quality, buildability y risk checks |
+| State-of-Art Evals | eval plan | Evalua frescura, fuentes, alternativas, buildability y accionabilidad |
 
 ### ADRs — Architecture Decision Records
 | ADR | Título | Estado |
@@ -102,6 +113,10 @@ la estructura — no son el código de producción.
 | 014 | Auth & credentials (brokered, OS Keychain, OAuth PKCE) | ✅ accepted |
 | 015 | UI nativa (Next.js + Electron wrapper, TV via HDMI/Cast) | ✅ accepted |
 | 016 | Model routing + GPU strategy (on-demand, 3 tiers) | ✅ accepted |
+| 021 | Dedicated Oli Runtime y entorno de ejecucion del usuario | ✅ accepted |
+| 022 | Public Oli Labs y frontera private core/public proof | ✅ accepted |
+| 023 | Subagent engineering contracts | ✅ accepted |
+| 025 | State-of-the-art discovery and decision memos | ✅ accepted |
 
 ### Schemas (especificación de contratos)
 | Schema | Estado | Nota |
@@ -111,6 +126,8 @@ la estructura — no son el código de producción.
 | tool.ts | ✅ completo | ídem |
 | playbook.ts | ✅ completo | ídem |
 | suboperator.ts | ✅ completo | ídem |
+| subagent_contracts.ts | ✅ v0 | Capa contractual superior para MissionClass, ContextPacket, AgentTaskResult y TopologyDecision |
+| decision_memo.ts | ✅ v0 | Contrato para recomendaciones actuales y auditables |
 
 ### Stack
 | Artefacto | Estado |

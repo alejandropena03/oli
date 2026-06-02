@@ -1,0 +1,214 @@
+{
+  "created_at": "2026-05-31T19:22:38.989310+00:00",
+  "probes": [
+    {
+      "connector": "openrouter_docs_index",
+      "url": "https://openrouter.ai/docs/llms.txt",
+      "ok": true,
+      "started_at": "2026-05-31T19:22:34.546449+00:00",
+      "status": 200,
+      "summary": {
+        "chars": 61717,
+        "first_300": "# OpenRouter | Documentation\n\n## Instructions for AI Agents\n\n- For clean Markdown of any page, append `.md` to the page URL\n- For a complete documentation index, see https://openrouter.ai/docs/llms.txt\n- For full documentation content in one file, see https://openrouter.ai/docs/llms-full.txt\n- For s",
+        "contains_expected_markers": {
+          "has_docs_title": true,
+          "has_apps_link": true,
+          "has_models": true
+        }
+      }
+    },
+    {
+      "connector": "github_repo_hermes",
+      "url": "https://api.github.com/repos/NousResearch/hermes-agent",
+      "ok": true,
+      "started_at": "2026-05-31T19:22:34.909009+00:00",
+      "status": 200,
+      "summary": {
+        "full_name": "NousResearch/hermes-agent",
+        "description": "The agent that grows with you",
+        "stars": 174548,
+        "forks": 29646,
+        "open_issues": 15487,
+        "license": "MIT",
+        "pushed_at": "2026-05-31T19:13:47Z"
+      }
+    },
+    {
+      "connector": "github_repo_opencode",
+      "url": "https://api.github.com/repos/opencode-ai/opencode",
+      "ok": true,
+      "started_at": "2026-05-31T19:22:35.161584+00:00",
+      "status": 200,
+      "summary": {
+        "full_name": "opencode-ai/opencode",
+        "description": "A powerful AI coding agent. Built for the terminal.",
+        "stars": 12775,
+        "forks": 1430,
+        "open_issues": 158,
+        "license": "MIT",
+        "pushed_at": "2025-09-18T02:54:28Z"
+      }
+    },
+    {
+      "connector": "github_repo_kilocode",
+      "url": "https://api.github.com/repos/Kilo-Org/kilocode",
+      "ok": true,
+      "started_at": "2026-05-31T19:22:35.519392+00:00",
+      "status": 200,
+      "summary": {
+        "full_name": "Kilo-Org/kilocode",
+        "description": "Kilo is the all-in-one agentic engineering platform. Build, ship, and iterate faster with the most popular open source coding agent.",
+        "stars": 19736,
+        "forks": 2621,
+        "open_issues": 1260,
+        "license": "MIT",
+        "pushed_at": "2026-05-31T17:51:42Z"
+      }
+    },
+    {
+      "connector": "huggingface_model_search",
+      "url": "https://huggingface.co/api/models?search=Qwen3&limit=5",
+      "ok": true,
+      "started_at": "2026-05-31T19:22:35.976859+00:00",
+      "status": 200,
+      "summary": {
+        "count": 5,
+        "top": [
+          {
+            "id": "HauhauCS/Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive",
+            "downloads": 2439402,
+            "likes": 1149,
+            "lastModified": null
+          },
+          {
+            "id": "unsloth/Qwen3.6-27B-MTP-GGUF",
+            "downloads": 926440,
+            "likes": 575,
+            "lastModified": null
+          },
+          {
+            "id": "Qwen/Qwen3.6-27B",
+            "downloads": 5064096,
+            "likes": 1551,
+            "lastModified": null
+          },
+          {
+            "id": "nvidia/Qwen3.6-35B-A3B-NVFP4",
+            "downloads": 105608,
+            "likes": 85,
+            "lastModified": null
+          },
+          {
+            "id": "Qwen/Qwen3.6-35B-A3B",
+            "downloads": 5718662,
+            "likes": 1955,
+            "lastModified": null
+          }
+        ]
+      }
+    },
+    {
+      "connector": "arxiv_memory_search",
+      "url": "https://export.arxiv.org/api/query?search_query=all%3Aagent+memory&start=0&max_results=5",
+      "ok": true,
+      "started_at": "2026-05-31T19:22:36.167133+00:00",
+      "status": 200,
+      "summary": {
+        "chars": 11320,
+        "first_300": "<?xml version='1.0' encoding='UTF-8'?>\n<feed xmlns:opensearch=\"http://a9.com/-/spec/opensearch/1.1/\" xmlns:arxiv=\"http://arxiv.org/schemas/atom\" xmlns=\"http://www.w3.org/2005/Atom\">\n  <id>https://arxiv.org/api/26N7MuiYKSk0GCO6KEuXf5YHY8k</id>\n  <title>arXiv Query: search_query=all:agent OR all:memor",
+        "contains_expected_markers": {
+          "has_agent_memory": true,
+          "has_entry": true
+        }
+      }
+    },
+    {
+      "connector": "semantic_scholar_search",
+      "url": "https://api.semanticscholar.org/graph/v1/paper/search?query=agent+memory+temporal+knowledge+graph&limit=5&fields=title%2Cyear%2CcitationCount%2Curl",
+      "ok": false,
+      "started_at": "2026-05-31T19:22:36.672537+00:00",
+      "error": "HTTPError: HTTP Error 429: "
+    },
+    {
+      "connector": "openalex_search",
+      "url": "https://api.openalex.org/works?search=agent+memory+temporal+knowledge+graph&per-page=5",
+      "ok": true,
+      "started_at": "2026-05-31T19:22:37.191114+00:00",
+      "status": 200,
+      "summary": {
+        "count": 5,
+        "top": [
+          {
+            "title": "Zep: A Temporal Knowledge Graph Architecture for Agent Memory",
+            "publication_year": 2025,
+            "cited_by_count": 5,
+            "doi": "https://doi.org/10.48550/arxiv.2501.13956"
+          },
+          {
+            "title": "Reinforcement Learning: A Survey",
+            "publication_year": 1996,
+            "cited_by_count": 8798,
+            "doi": "https://doi.org/10.1613/jair.301"
+          },
+          {
+            "title": "Multi-hop reasoning over paths in temporal knowledge graphs using reinforcement learning",
+            "publication_year": 2021,
+            "cited_by_count": 56,
+            "doi": "https://doi.org/10.1016/j.asoc.2021.107144"
+          },
+          {
+            "title": "Review of deep learning: concepts, CNN architectures, challenges, applications, future directions",
+            "publication_year": 2021,
+            "cited_by_count": 7463,
+            "doi": "https://doi.org/10.1186/s40537-021-00444-8"
+          },
+          {
+            "title": "Whatever next? Predictive brains, situated agents, and the future of cognitive science",
+            "publication_year": 2013,
+            "cited_by_count": 5819,
+            "doi": "https://doi.org/10.1017/s0140525x12000477"
+          }
+        ]
+      }
+    },
+    {
+      "connector": "nvd_keyword_search",
+      "url": "https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch=Claude+Code&resultsPerPage=5",
+      "ok": true,
+      "started_at": "2026-05-31T19:22:38.501367+00:00",
+      "status": 200,
+      "summary": {
+        "totalResults": 40,
+        "sample": [
+          {
+            "id": "CVE-2025-52882",
+            "published": "2025-06-24T20:15:26.543"
+          },
+          {
+            "id": "CVE-2025-54794",
+            "published": "2025-08-05T01:15:41.877"
+          },
+          {
+            "id": "CVE-2025-54795",
+            "published": "2025-08-05T01:15:42.023"
+          },
+          {
+            "id": "CVE-2025-55284",
+            "published": "2025-08-16T02:15:24.637"
+          },
+          {
+            "id": "CVE-2025-57755",
+            "published": "2025-08-21T17:15:31.610"
+          }
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "ok": 8,
+    "failed": 1,
+    "failed_connectors": [
+      "semantic_scholar_search"
+    ]
+  }
+}

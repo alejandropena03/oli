@@ -41,6 +41,10 @@ Links relevantes.
 - [ADR-003](ADR-003-memory-storage.md) — Storage de memoria (JSON V0, hybrid V3+) — proposed
 - [ADR-004](ADR-004-permission-model.md) — Modelo de permisos (5 clases 0-4) — proposed
 - [ADR-005](ADR-005-runtime.md) — Runtime principal (TypeScript + Bun/Node) — proposed
+- [ADR-021](ADR-021-dedicated-oli-runtime.md) - Dedicated Oli Runtime and User-Owned Execution Environment - accepted
+- [ADR-022](ADR-022-public-oli-labs.md) - Public Oli Labs and Private Core Boundary - accepted
+- [ADR-023](ADR-023-subagent-engineering-contracts.md) - Subagent Engineering Contracts - accepted
+- [ADR-025](ADR-025-state-of-art-discovery-and-decision-memos.md) - State-of-the-Art Discovery and Decision Memos - accepted
 
 ## ADRs pendientes
 

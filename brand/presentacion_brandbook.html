@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/oli - Presentación de Marca</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void: #0A0A0A;
+      --surface: #111111;
+      --surface-2: #1A1A1A;
+      --border: #2A2A2A;
+      --platinum: #E8E8E8;
+      --platinum-dim: #9A9A9A;
+      --cyan: #00E5FF;
+      --green: #00FF87;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body, html {
+      width: 100%;
+      height: 100%;
+      background: var(--void);
+      color: var(--platinum);
+      font-family: var(--font-body);
+      overflow: hidden; /* Hide scrollbars for a clean presentation look */
+    }
+
+    /* Presentation Container */
+    #presentation {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.8, 0, 0.2, 1);
+    }
+
+    /* Slide Layout */
+    .slide {
+      min-width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 10vw;
+      position: relative;
+    }
+
+    /* Typography */
+    .label {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      letter-spacing: 0.2em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(60px, 8vw, 120px);
+      font-weight: 700;
+      letter-spacing: -3px;
+      line-height: 1;
+      margin-bottom: 24px;
+    }
+    h2 {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 5vw, 64px);
+      font-weight: 600;
+      letter-spacing: -1px;
+      margin-bottom: 32px;
+    }
+    h3 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    p {
+      color: var(--platinum-dim);
+      font-size: 20px;
+      line-height: 1.6;
+      max-width: 800px;
+      margin-bottom: 24px;
+    }
+    .cyan { color: var(--cyan); }
+    .green { color: var(--green); }
+
+    /* Grids & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 32px;
+      border-radius: 8px;
+    }
+
+    /* Colors Grid */
+    .color-swatch {
+      height: 100px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    /* Navigation */
+    .nav-controls {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      display: flex;
+      gap: 16px;
+      z-index: 100;
+    }
+    button {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--platinum);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: var(--surface-2);
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+    button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      border-color: var(--border);
+      color: var(--platinum);
+    }
+    button svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* Progress Bar */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: var(--cyan);
+      width: 0%;
+      transition: width 0.3s ease;
+      z-index: 100;
+    }
+
+    /* Branding in corners */
+    .brand-corner {
+      position: fixed;
+      top: 40px;
+      left: 40px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 24px;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar" id="progress"></div>
+  <div class="brand-corner"><span class="cyan">/</span>oli</div>
+
+  <div id="presentation">
+    
+    <!-- SLIDE 1: Cover -->
+    <div class="slide">
+      <div class="label">// BRAND SYSTEM — v1.0</div>
+      <h1><span class="cyan">/</span>oli</h1>
+      <p style="font-size: 28px; color: var(--platinum);">La computadora, por fin, entendió.</p>
+      <p style="font-family: var(--font-mono); font-size: 14px; margin-top: 40px; color: var(--border);">Utiliza las flechas del teclado para navegar →</p>
+    </div>
+
+    <!-- SLIDE 2: Origin -->
+    <div class="slide">
+      <div class="grid-2">
+        <div>
+          <div class="label">01 — El Origen</div>
+          <h2>El comando y lo humano.</h2>
+          <p>No somos otro chatbot. Somos una capa de ejecución AI-first. La marca nace de la intersección entre la orden técnica y la cercanía.</p>
+        </div>
+        <div class="grid-2" style="gap: 24px;">
+          <div class="card">
+            <h1 class="cyan" style="font-size: 80px; margin-bottom: 0;">/</h1>
+            <h3 style="margin-top: 16px;">Slash</h3>
+            <p style="font-size: 16px;">Representa comando, ejecución, terminal y acción. "Soy comando".</p>
+          </div>
+          <div class="card">
+            <h1 style="font-size: 80px; margin-bottom: 0;">oli</h1>
+            <h3 style="margin-top: 16px;">Oli</h3>
+            <p style="font-size: 16px;">Suena a saludo, compañero accesible e hiper-humano. "Soy cercano".</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Pillars -->
+    <div class="slide">
+      <div class="label">02 — ADN de Marca</div>
+      <h2>Pilares de Ejecución</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3 class="cyan">01. Sostenibilidad</h3>
+          <p style="font-size: 16px;">Aprovechar activos, herramientas y cómputo existentes. Cero greenwashing.</p>
+        </div>
+        <div class="card">
+          <h3 class="cyan">02. Integración</h3>
+          <p style="font-size: 16px;">Conectar intención, planeación y ejecución sin saltar de pestañas.</p>
+        </div>
+        <div class="card">
+          <h3 class="cyan">03. AI First</h3>
+          <p style="font-size: 16px;">La IA es el motor, no un adorno. El humano decide, la máquina ejecuta.</p>
+        </div>
+        <div class="card">
+          <h3 class="cyan">04. Eficiencia</h3>
+          <p style="font-size: 16px;">Eliminar el "teatro operativo", las aprobaciones absurdas y los pasos inútiles.</p>
+        </div>
+        <div class="card">
+          <h3 class="cyan">05. Valor</h3>
+          <p style="font-size: 16px;">Elegir siempre la ruta que devuelva el mejor valor (local vs premium).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Voice -->
+    <div class="slide">
+      <div class="label">03 — Tono de Voz</div>
+      <h2>Operador brillante.<br>Sin paciencia para el desperdicio.</h2>
+      <p style="font-size: 24px; color: var(--platinum); max-width: 900px; border-left: 4px solid var(--cyan); padding-left: 24px; margin: 40px 0;">
+        "Tu calendario no necesita motivación. Necesita automatización."
+      </p>
+      <div class="grid-2" style="margin-top: 40px;">
+        <div>
+          <h3 style="color: var(--green);">✓ DO</h3>
+          <p>Ser directo, útil, transparente y con un toque de irreverencia contra la fricción o la ineficiencia.</p>
+        </div>
+        <div>
+          <h3 style="color: #FF4444;">✗ DON'T</h3>
+          <p>Nunca burlarse del usuario por no saber programar. No ser un SaaS corporativo tibio ni un robot "cute".</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Visual System -->
+    <div class="slide">
+      <div class="label">04 — Sistema Visual</div>
+      <h2>Pragmatic Void</h2>
+      <p>Minimalismo industrial. Alto contraste. Un vacío arquitectónico diseñado para que resalte la ejecución.</p>
+      <div class="grid-3" style="margin-top: 40px;">
+        <div>
+          <div class="color-swatch" style="background: #0A0A0A; border: 1px solid #2A2A2A;"></div>
+          <h4 style="font-family: var(--font-mono); color: var(--platinum);">Void (#0A0A0A)</h4>
+          <p style="font-size: 14px; margin-top: 8px;">El fondo arquitectónico.</p>
+        </div>
+        <div>
+          <div class="color-swatch" style="background: #E8E8E8;"></div>
+          <h4 style="font-family: var(--font-mono); color: var(--void);">Platinum (#E8E8E8)</h4>
+          <p style="font-size: 14px; margin-top: 8px;">Para legibilidad pura.</p>
+        </div>
+        <div>
+          <div class="color-swatch" style="background: #00E5FF;"></div>
+          <h4 style="font-family: var(--font-mono); color: var(--cyan);">Electric Cyan (#00E5FF)</h4>
+          <p style="font-size: 14px; margin-top: 8px;">La intención y la acción. Todo lo que importa.</p>
+        </div>
+        <div>
+          <div class="color-swatch" style="background: #00FF87;"></div>
+          <h4 style="font-family: var(--font-mono); color: var(--green);">Terminal Green (#00FF87)</h4>
+          <p style="font-size: 14px; margin-top: 8px;">Exclusivo para estados de éxito.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Typography -->
+    <div class="slide">
+      <div class="label">05 — Tipografía</div>
+      <h2>Arquitectura de Textos</h2>
+      <div class="card" style="margin-bottom: 24px;">
+        <h4 style="font-family: var(--font-mono); color: var(--platinum-dim); margin-bottom: 8px;">DISPLAY — Space Grotesk</h4>
+        <h2 style="margin-bottom: 0;">Titulares contundentes.</h2>
+      </div>
+      <div class="card" style="margin-bottom: 24px;">
+        <h4 style="font-family: var(--font-mono); color: var(--platinum-dim); margin-bottom: 8px;">CÓDIGO — JetBrains Mono</h4>
+        <p style="font-family: var(--font-mono); font-size: 20px; color: var(--cyan); margin-bottom: 0;">/oli run deploy --env production</p>
+      </div>
+      <div class="card">
+        <h4 style="font-family: var(--font-mono); color: var(--platinum-dim); margin-bottom: 8px;">CUERPO — Inter</h4>
+        <p style="margin-bottom: 0;">Para la lectura humana, interfaces neutras y explicaciones sin fatiga visual.</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: Logos -->
+    <div class="slide">
+      <div class="label">06 — Logos</div>
+      <h2>La Dirección Recomendada</h2>
+      <p>Una fusión de rutas para distintos contextos.</p>
+      <div class="grid-2" style="margin-top: 40px;">
+        <div class="card" style="text-align: center; padding: 48px;">
+          <!-- Route B Icon -->
+          <svg viewBox="0 0 64 64" width="120" style="margin: 0 auto 24px; display: block;">
+            <rect width="64" height="64" fill="#0A0A0A" rx="8"/>
+            <polygon points="14,56 22,8 30,8 22,56" fill="#003A44" opacity="0.6"/>
+            <polygon points="12,54 20,6 28,6 20,54" fill="#00E5FF"/>
+            <rect x="36" y="46" width="4" height="10" fill="#00E5FF" opacity="0.6"/>
+          </svg>
+          <h3>App / Social (Route B)</h3>
+          <p style="font-size: 14px;">El Slash Command. Audaz, distintivo y conceptualmente perfecto.</p>
+        </div>
+        <div class="card" style="text-align: center; padding: 48px;">
+          <!-- Route E Icon -->
+          <svg viewBox="0 0 64 64" width="120" style="margin: 0 auto 24px; display: block;">
+            <rect width="64" height="64" fill="#0A0A0A" rx="8"/>
+            <circle cx="32" cy="32" r="24" stroke="#E8E8E8" stroke-width="1.5" fill="none"/>
+            <line x1="22" y1="50" x2="42" y2="14" stroke="#00E5FF" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <h3>Institucional (Route E)</h3>
+          <p style="font-size: 14px;">Industrial Minimal. Máxima precisión. Como una marca certificada.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: Execution -->
+    <div class="slide">
+      <div class="label">07 — Experiencia Core</div>
+      <h2>El Comprobante de Ejecución</h2>
+      <p>La marca no lanza confeti al terminar un trabajo. Entrega total transparencia radical. La mejor versión de /oli no dice "confía en mí". Dice: "mira cómo lo hice".</p>
+      
+      <div class="card" style="border-left: 4px solid var(--cyan); margin-top: 32px; background: #0A0A0A;">
+        <h4 style="font-family: var(--font-mono); color: var(--platinum); margin-bottom: 16px;">/oli RUTA COMPLETADA</h4>
+        <div style="font-family: var(--font-mono); font-size: 14px; color: var(--platinum-dim); line-height: 1.8;">
+          <span class="cyan">▶ Objetivo:</span> Crear reporte semanal de ventas.<br>
+          <span class="cyan">▶ Ruta:</span> Archivos locales + modelo premium para resumen.<br>
+          <span class="cyan">▶ Costo:</span> Premium (Alta precisión requerida).<br>
+          <span class="green">✓ Archivos modificados y listos para tu revisión.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: Mockups 1 -->
+    <div class="slide">
+      <div class="label">08 — Espacios /oli</div>
+      <h2>Interfaces de Ejecución</h2>
+      <p>Así se materializa el diseño Pragmatic Void en interfaces de uso real.</p>
+      <div class="grid-2" style="margin-top: 24px; gap: 32px;">
+        <div>
+          <img src="heroes/hero-4-terminal-intent.svg" alt="Terminal Intent" style="width: 100%; border: 1px solid var(--border); border-radius: 8px;">
+          <h4 style="font-family: var(--font-mono); color: var(--platinum); margin-top: 16px;">▶ Terminal Intent</h4>
+          <p style="font-size: 14px; margin-top: 8px;">La interfaz clásica, limpia y focalizada en los logs y comandos.</p>
+        </div>
+        <div>
+          <img src="heroes/hero-2-voice-command.svg" alt="Voice Command" style="width: 100%; border: 1px solid var(--border); border-radius: 8px;">
+          <h4 style="font-family: var(--font-mono); color: var(--platinum); margin-top: 16px;">▶ Voice Command</h4>
+          <p style="font-size: 14px; margin-top: 8px;">La abstracción conversacional, convirtiendo lenguaje natural a instrucciones precisas.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: Mockups 2 -->
+    <div class="slide">
+      <div class="label">09 — Espacios /oli</div>
+      <h2>Orquestación y Dashboard</h2>
+      <p>El control total de herramientas conectadas y dashboards de eficiencia en un solo lugar.</p>
+      <div class="grid-2" style="margin-top: 24px; gap: 32px;">
+        <div>
+          <img src="heroes/hero-3-tool-orchestration.svg" alt="Tool Orchestration" style="width: 100%; border: 1px solid var(--border); border-radius: 8px;">
+          <h4 style="font-family: var(--font-mono); color: var(--platinum); margin-top: 16px;">▶ Tool Orchestration</h4>
+          <p style="font-size: 14px; margin-top: 8px;">Integración de herramientas para flujos complejos ("stack con dirección").</p>
+        </div>
+        <div>
+          <img src="heroes/hero-5-efficiency-dashboard.svg" alt="Efficiency Dashboard" style="width: 100%; border: 1px solid var(--border); border-radius: 8px;">
+          <h4 style="font-family: var(--font-mono); color: var(--platinum); margin-top: 16px;">▶ Efficiency Dashboard</h4>
+          <p style="font-size: 14px; margin-top: 8px;">Panel de métricas, visibilidad de automatizaciones y reportes de valor entregado.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: End -->
+    <div class="slide">
+      <div class="grid-2" style="align-items: center; text-align: center; justify-content: center; width: 100%;">
+        <div style="grid-column: span 2;">
+          <img src="heroes/hero-1-execution-layer.svg" alt="Execution Layer" style="width: 60%; margin: 0 auto; border: 1px solid var(--border); border-radius: 8px;">
+          <h2 style="margin-top: 40px; margin-bottom: 16px;">Es trabajo terminado.</h2>
+          <p style="margin: 0 auto;">/oli — Capa de ejecución AI-first</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="nav-controls">
+    <button id="prevBtn" disabled>
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button id="nextBtn">
+      <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const presentation = document.getElementById('presentation');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressBar = document.getElementById('progress');
+    
+    let currentSlide = 0;
+    const totalSlides = slides.length;
+
+    function updateSlide() {
+      // Move container
+      presentation.style.transform = `translateX(-${currentSlide * 100}vw)`;
+      
+      // Update buttons
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.disabled = currentSlide === totalSlides - 1;
+      
+      // Update progress bar
+      const progress = ((currentSlide + 1) / totalSlides) * 100;
+      progressBar.style.width = `${progress}%`;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    nextBtn.addEventListener('click', nextSlide);
+    prevBtn.addEventListener('click', prevSlide);
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    // Initialize
+    updateSlide();
+  </script>
+</body>
+</html>
