@@ -1,89 +1,91 @@
 ---
-task_id: TASK-003
-status: WAITING_FOR_CLAUDE
+task_id: TASK-004
+status: WAITING_FOR_LOCAL
 owner: local_agent
 created_by: claude
-created_at: 2026-06-01T24:00Z
-updated_at: 2026-06-02T00:30Z
+created_at: 2026-06-02T01:00Z
+updated_at: 2026-06-02T01:00Z
 ---
 
 ## Misión
 
-Instalar las dependencias de PostgresSaver y correr los 4 integration tests de checkpointing contra Postgres real. Verificar que checkpoint/resume funciona de verdad.
+Levantar el servidor de Oli en el Mac, hacerle la siguiente petición real, y presentar un análisis comparativo entre el output que generó Oli vía API (con modelo real via OpenRouter) y el output hardcodeado que Claude escribió a mano.
 
-## Contexto relevante
+## La petición que Alejandro quiere ver procesada
 
-Claude implementó:
-- `packages/orchestrator/checkpointer.py` — factory que devuelve PostgresSaver si OLI_DATABASE_URL apunta a Postgres, MemorySaver si no. Lazy import: no falla sin el paquete.
-- `packages/orchestrator/mission_graph.py` — refactorizado para usar el factory. Topología separada de checkpointer.
-- `tests/test_postgres_checkpointer.py` — 6 unit tests (siempre corren) + 4 integration tests (se activan con Postgres).
+```
+"Quiero un cockpit donde todas mis herramientas de comunicacion:
+WhatsApp, Slack, Gmail e Instagram me lean todos los mensajes,
+estructuren mis pendientes, me hagan resumenes y me recuerden
+cuando no haya respondido algo importante."
+```
 
-Estado actual en tu Mac (después de TASK-002):
-- Postgres 18 corriendo en Docker en `localhost:5432`
-- `.env.local` tiene `OLI_MISSION_STORE=sqlalchemy` y `OLI_DATABASE_URL=postgresql+psycopg2://oli:oli@localhost:5432/oli`
-- 51 tests pasan aquí (45 originales + 6 unit tests nuevos), 4 skipped esperando Postgres
+## Lo que debes hacer
 
-PostgresSaver de LangGraph requiere dos paquetes que NO están en `pyproject.toml` todavía:
-- `langgraph-checkpoint-postgres` — el saver oficial de LangGraph
-- `psycopg[binary]` — psycopg3 (diferente a psycopg2, que ya tienes)
+### Paso 1 — Levantar Oli
+
+```bash
+cd ~/oli
+git pull
+python -m uvicorn apps.api.main:app --host 127.0.0.1 --port 8000
+```
+
+### Paso 2 — Hacerle la petición a Oli via API
+
+La misión más cercana disponible hoy es `research-brief` — usa esa con el input de Alejandro:
+
+```bash
+curl -X POST http://127.0.0.1:8000/missions/research-brief \
+  -H "Content-Type: application/json" \
+  -d '{"raw_input": "Quiero un cockpit donde todas mis herramientas de comunicacion: WhatsApp, Slack, Gmail e Instagram me lean todos los mensajes, estructuren mis pendientes, me hagan resumenes y me recuerden cuando no haya respondido algo importante."}'
+```
+
+Guarda el `mission_id` que devuelve.
+
+### Paso 3 — Recuperar el resultado completo
+
+```bash
+# El plan que Oli generó
+curl http://127.0.0.1:8000/missions/{mission_id}
+
+# Los eventos (trail de estados)
+curl http://127.0.0.1:8000/missions/{mission_id}/events
+
+# La evidencia registrada
+curl http://127.0.0.1:8000/missions/{mission_id}/evidence
+
+# El reporte final
+curl http://127.0.0.1:8000/missions/{mission_id}/report
+```
+
+### Paso 4 — Análisis comparativo
+
+Claude escribió a mano un cockpit hardcodeado (`cockpit_comms.py`, ya eliminado del repo).
+Ese output está en `.bridge/tasks/TASK-004-claude-hardcoded-output.md` para referencia.
+
+Compara los dos outputs en un análisis honesto:
+
+| Dimensión | Output de Claude (hardcoded) | Output de Oli via API (real) |
+|---|---|---|
+| Quién lo generó | Claude escribiendo Python | Oli procesando la petición |
+| Datos | Inventados por Claude | Generados por el Mission Kernel con modelo |
+| Plan de pasos | Hardcodeado | Generado por el orchestrator |
+| Permisos | Correctos pero estáticos | Clasificados dinámicamente |
+| Evidencia | Simulada | Real — guardada en Postgres |
+| Utilidad real | Ninguna — es teatro | Esto es lo que Oli hace |
+
+Escribe el análisis en `.bridge/tasks/TASK-004-analysis.md`.
 
 ## Entregable esperado
 
-1. Paquetes instalados en Mac
-2. `python -m pytest tests/test_postgres_checkpointer.py -v` → 10 passed, 0 skipped
-3. Los 4 integration tests verdes:
-   - `test_checkpointer_returns_postgres_saver`
-   - `test_mission_checkpoint_survives_graph_reinvocation`
-   - `test_different_threads_have_isolated_checkpoints`
-   - `test_graph_builds_with_postgres_checkpointer`
-4. `python -m pytest` completo → 51 passed (o más), 0 skipped
-5. Este archivo actualizado con `status: WAITING_FOR_CLAUDE` y resultado
-
-## Criterio de completación
-
-```bash
-# 1. Instalar dependencias de PostgresSaver
-pip install langgraph-checkpoint-postgres "psycopg[binary]"
-
-# 2. Correr solo los tests de Postgres primero
-python -m pytest tests/test_postgres_checkpointer.py -v
-
-# Output esperado:
-# TestCheckpointerFactory::test_returns_memory_saver_by_default PASSED
-# TestCheckpointerFactory::test_returns_memory_saver_when_store_is_json PASSED
-# TestCheckpointerFactory::test_psycopg3_url_conversion PASSED
-# TestCheckpointerFactory::test_psycopg3_url_conversion_passthrough PASSED
-# TestCheckpointerFactory::test_graph_builds_without_postgres PASSED
-# TestCheckpointerFactory::test_graph_builds_with_memory_saver PASSED
-# TestPostgresSaverIntegration::test_checkpointer_returns_postgres_saver PASSED
-# TestPostgresSaverIntegration::test_mission_checkpoint_survives_graph_reinvocation PASSED
-# TestPostgresSaverIntegration::test_different_threads_have_isolated_checkpoints PASSED
-# TestPostgresSaverIntegration::test_graph_builds_with_postgres_checkpointer PASSED
-# 10 passed
-
-# 3. Correr suite completa
-python -m pytest
-
-# 4. Si todo verde, agregar las nuevas deps a pyproject.toml:
-# En [project.dependencies] agregar:
-#   "langgraph-checkpoint-postgres>=2.0",
-#   "psycopg[binary]>=3.1",
-```
-
-Éxito = 10 passed en test_postgres_checkpointer.py + suite completa verde.
-
-## Resultado (DeepSeek)
-
-- ✅ `langgraph-checkpoint-postgres` + `psycopg[binary]` instalados
-- ✅ `python -m pytest tests/test_postgres_checkpointer.py -v`: **10/10 passed**
-- ✅ `python -m pytest`: **55/55 passed** (suite completa contra Postgres real)
-- ✅ Dependencies agregadas a `pyproject.toml`
-- 🐛 Fix: tests de integración corregidos — PostgresSaver guarda estado bajo `__root__`, no como keys directas
+1. Output completo de Oli via API (mission, events, evidence, report) — guardado en `.bridge/tasks/TASK-004-oli-output.md`
+2. Análisis comparativo honesto en `.bridge/tasks/TASK-004-analysis.md`
+3. Este archivo actualizado con `status: WAITING_FOR_CLAUDE`
 
 ## Notas del agente anterior (Claude)
 
-- El factory `get_checkpointer()` detecta Postgres automáticamente por variables de entorno. No hay cambio de código necesario en el Mac — solo instalar los paquetes.
-- Si `langgraph-checkpoint-postgres` no encuentra la versión correcta, probar: `pip install "langgraph-checkpoint-postgres>=2.0"`.
-- El test `test_mission_checkpoint_survives_graph_reinvocation` es el más importante: prueba que una misión completada persiste en Postgres y es recuperable. Si ese pasa, el checkpointing es real.
-- Si algún integration test falla con error de conexión, verificar que el contenedor Docker sigue corriendo: `docker ps | grep oli-postgres`.
-- Después de validar, agregar las dos nuevas deps a `pyproject.toml` y hacer push. Claude actualiza el REPO_MAP con el nuevo módulo checkpointer.
+- Eliminé `cockpit_comms.py` y `demo_cockpit.py` — era output hardcodeado sin valor real.
+- El Mission Kernel real vive en la API. La demo correcta es via HTTP contra el servidor.
+- El modelo que usará Oli es el configurado en `.env.local` — si tienes OpenRouter con `openrouter/quasar-alpha` o similar, úsalo. Si no, el DevelopmentAdapter genera texto mock pero el kernel sí es real.
+- Lo valioso no es el texto del output — es ver el plan, los estados, la evidencia y el reporte que Oli genera solo a partir de esa petición.
+- Guarda el output raw de la API en JSON para que el análisis sea sobre datos reales.
