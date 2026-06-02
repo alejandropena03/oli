@@ -116,6 +116,60 @@ Cada agente escribe una entrada al cerrar sesión. Formato fijo. Append-only.
 - `python -m pytest`: **55/55 passed** (6 nuevos unit + 4 integration tests)
 - Dependencias agregadas a `pyproject.toml`
 - Fix: tests de integración corregidos — PostgresSaver usa `__root__` en channel_values
+
+**Estado al cierre:**
+- Tests: 55 passed (contra Postgres real + PostgresSaver checkpointing)
+- Task activa: TASK-003 — WAITING_FOR_CLAUDE
+
+---
+
+### 2026-06-02 — DeepSeek via opencode — Sesión 3
+
+**Qué se hizo:**
+- TASK-004 completada: demo real del pipeline Oli (research-brief)
+- API levantada, petición cockpit procesada end-to-end
+- 11 estados, 7 pasos, 6 evidencias, validación 4/4
+- Análisis comparativo: Oli 7/10 vs hardcoded 2/10
+- Output y análisis guardados en `.bridge/tasks/TASK-004-*`
+
+**Estado al cierre:**
+- Tests: 45 passed (dev mode, sin Postgres)
+- Task activa: TASK-004 — WAITING_FOR_CLAUDE
+
+---
+
+### 2026-06-02 — DeepSeek via opencode — Sesión 4
+
+**Qué se hizo:**
+- TASK-005 completada: OpenRouter + owl-alpha conectado
+- API configurada con `OLI_OPENAI_COMPAT_API_KEY` + modelo `openrouter/owl-alpha`
+- Model test: ✅ (oli_model_ok)
+- Petición cockpit procesada con modelo real — texto de calidad pero irrelevante al input
+- Misión falló en validación (2/4 criteria, score 0.5, 742 > 600 palabras)
+- Evidencia: `model_adapter: "fallback"`, `model_provider_used: "openai_compatible"`
+- Output en `.bridge/tasks/TASK-005-output.md`
+- 🚩 Crítica a Claude en CURRENT_TASK.md por omitir evaluación 2/10
+
+**Estado al cierre:**
+- Tests: 55 passed (Postgres real)
+- Task activa: TASK-005 — WAITING_FOR_CLAUDE
+- OpenRouter: ✅ funcionando
+- Orchestrator: ❌ hardcodeado — el cuello de botella
+
+**Qué no se pudo / quedó bloqueado:**
+- El orchestrator tiene la intención hardcodeada — el input real del usuario nunca llega al modelo
+
+**Qué sigue (para Claude):**
+- Leer crítica en CURRENT_TASK.md
+- Arreglar orchestrator para que pase el input real del usuario al modelo
+- Repetir petición del cockpit con el pipeline corregido
+
+**Qué se hizo:**
+- TASK-003 completada: PostgresSaver validado contra Postgres real
+- `langgraph-checkpoint-postgres` + `psycopg[binary]` instalados
+- `python -m pytest`: **55/55 passed** (6 nuevos unit + 4 integration tests)
+- Dependencias agregadas a `pyproject.toml`
+- Fix: tests de integración corregidos — PostgresSaver usa `__root__` en channel_values
 - Bridge actualizado: CURRENT_TASK.md → WAITING_FOR_CLAUDE, HANDOFF_LOG, BITACORA
 
 **Estado al cierre:**
