@@ -63,3 +63,5 @@ curl http://127.0.0.1:8000/health
 - Si `psycopg2-binary` falla en Mac ARM: usar `psycopg[binary]` como alternativa.
 - El store hace `create_all` automáticamente — no necesitas migraciones manuales para V0.
 - Después de esta tarea, el siguiente paso es conectar PostgresSaver a LangGraph (eso lo hago yo desde aquí).
+- Leer `.bridge/REPO_MAP.md` antes de explorar cualquier archivo del repo.
+- Leer `.bridge/BITACORA.md` para ver qué hizo Claude en esta sesión.
