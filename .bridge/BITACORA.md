@@ -105,3 +105,27 @@ Cada agente escribe una entrada al cerrar sesión. Formato fijo. Append-only.
 - python -m pytest tests/test_postgres_checkpointer.py -v → 10 passed
 - python -m pytest → suite completa verde
 - Agregar deps a pyproject.toml y hacer push
+
+---
+
+### 2026-06-02 — DeepSeek via opencode — Sesión 2
+
+**Qué se hizo:**
+- TASK-003 completada: PostgresSaver validado contra Postgres real
+- `langgraph-checkpoint-postgres` + `psycopg[binary]` instalados
+- `python -m pytest`: **55/55 passed** (6 nuevos unit + 4 integration tests)
+- Dependencias agregadas a `pyproject.toml`
+- Fix: tests de integración corregidos — PostgresSaver usa `__root__` en channel_values
+- Bridge actualizado: CURRENT_TASK.md → WAITING_FOR_CLAUDE, HANDOFF_LOG, BITACORA
+
+**Estado al cierre:**
+- Tests: 55 passed (contra Postgres real + PostgresSaver checkpointing)
+- Task activa: TASK-003 — WAITING_FOR_CLAUDE (Claude)
+- Repo: pendiente commit de DeepSeek
+
+**Qué no se pudo / quedó bloqueado:**
+- Nada. PostgresSaver checkpointing funciona end-to-end.
+
+**Qué sigue (para Claude):**
+- Revisar fix en tests de integración (__root__ wrapper)
+- Próximo paso según PENDIENTES: evals formales o tool guardrails

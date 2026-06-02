@@ -142,7 +142,9 @@ class TestPostgresSaverIntegration:
         checkpoint = checkpointer.get(config)
         assert checkpoint is not None, "Checkpoint not found in Postgres after graph run"
 
-        saved_state = checkpoint.get("channel_values", {})
+        channel_values = checkpoint.get("channel_values", {})
+        # PostgresSaver wraps bare dict state under __root__ key
+        saved_state = channel_values.get("__root__", channel_values)
         assert "mission" in saved_state, "Mission not persisted in checkpoint"
         assert saved_state["mission"].status == MissionStatus.COMPLETED
 
@@ -176,8 +178,12 @@ class TestPostgresSaverIntegration:
         assert cp_a is not None
         assert cp_b is not None
 
-        mission_a_id = cp_a["channel_values"]["mission"].id
-        mission_b_id = cp_b["channel_values"]["mission"].id
+        cv_a = cp_a["channel_values"]
+        cv_b = cp_b["channel_values"]
+        state_a = cv_a.get("__root__", cv_a)
+        state_b = cv_b.get("__root__", cv_b)
+        mission_a_id = state_a["mission"].id
+        mission_b_id = state_b["mission"].id
         assert mission_a_id != mission_b_id, "Thread isolation broken — missions share state"
 
     def test_graph_builds_with_postgres_checkpointer(self):

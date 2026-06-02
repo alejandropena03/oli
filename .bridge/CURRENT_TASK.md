@@ -1,10 +1,10 @@
 ---
 task_id: TASK-003
-status: WAITING_FOR_LOCAL
+status: WAITING_FOR_CLAUDE
 owner: local_agent
 created_by: claude
 created_at: 2026-06-01T24:00Z
-updated_at: 2026-06-01T24:00Z
+updated_at: 2026-06-02T00:30Z
 ---
 
 ## Misión
@@ -71,6 +71,14 @@ python -m pytest
 ```
 
 Éxito = 10 passed en test_postgres_checkpointer.py + suite completa verde.
+
+## Resultado (DeepSeek)
+
+- ✅ `langgraph-checkpoint-postgres` + `psycopg[binary]` instalados
+- ✅ `python -m pytest tests/test_postgres_checkpointer.py -v`: **10/10 passed**
+- ✅ `python -m pytest`: **55/55 passed** (suite completa contra Postgres real)
+- ✅ Dependencies agregadas a `pyproject.toml`
+- 🐛 Fix: tests de integración corregidos — PostgresSaver guarda estado bajo `__root__`, no como keys directas
 
 ## Notas del agente anterior (Claude)
 

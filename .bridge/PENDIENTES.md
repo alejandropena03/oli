@@ -9,8 +9,8 @@ Marcar completados con `- [x]`. No borrar items completados.
 
 - [x] Conectar Postgres 18 real con Docker en Mac — @local_agent — DONE 2026-06-01
 - [x] Conectar PostgresSaver de LangGraph (checkpointing real) — @claude — DONE 2026-06-01
-- [ ] Correr 4 integration tests de PostgresSaver contra Postgres real — @local_agent — URGENTE
-- [ ] Instalar `langgraph-checkpoint-postgres` y `psycopg[binary]` en Mac — @local_agent — URGENTE
+- [x] Correr 4 integration tests de PostgresSaver contra Postgres real — @local_agent — DONE 2026-06-02
+- [x] Instalar `langgraph-checkpoint-postgres` y `psycopg[binary]` en Mac — @local_agent — DONE 2026-06-02
 - [ ] Crear evals formales para las 3 mission classes — @claude — pendiente validación Postgres
 - [ ] Agregar tool guardrails reales antes de conectar herramientas externas — @claude — pendiente evals
 - [ ] ADR-024: Model Intelligence (decidido, no escrito) — @claude — media
