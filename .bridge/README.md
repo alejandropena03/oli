@@ -138,3 +138,29 @@ cat .bridge/CURRENT_TASK.md
 task(TASK-NNN): descripción breve    ← cuando se completa o actualiza una tarea
 bridge: descripción                  ← cuando se actualiza el protocolo
 ```
+
+---
+
+## Flujo bidireccional
+
+El bridge es bidireccional. Cualquier agente puede crear tareas para el otro.
+
+**DeepSeek crea tarea para Claude:**
+1. Escribe `CURRENT_TASK.md` con `owner: claude`, `status: WAITING_FOR_CLAUDE`
+2. Commit + push
+3. Claude hace pull, ejecuta, pushea de vuelta
+
+**Claude crea tarea para DeepSeek:**
+1. Escribe `CURRENT_TASK.md` con `owner: local_agent`, `status: WAITING_FOR_LOCAL`
+2. Commit + push
+3. DeepSeek hace pull, ejecuta, pushea de vuelta
+
+## Archivos del bridge
+
+| Archivo | Propósito | Quién escribe |
+|---|---|---|
+| `CURRENT_TASK.md` | Tarea activa actual | El agente que crea o actualiza la tarea |
+| `HANDOFF_LOG.md` | Historial append-only | Ambos, siempre al hacer handoff |
+| `PENDIENTES.md` | Sistema de pendientes compartido | Ambos en cualquier momento |
+| `tasks/TASK-NNN.md` | Tarea archivada (inmutable) | El agente que cierra la tarea |
+| `BRIEFING_FOR_CLAUDE.md` | Briefing especial (uso eventual) | DeepSeek |
