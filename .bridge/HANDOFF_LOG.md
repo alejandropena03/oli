@@ -132,3 +132,32 @@ No editar entradas anteriores. Solo agregar al final.
 **Evaluación:** 6/10 — mejora cualitativa vs TASK-005 (intención real, no hardcodeada), pero validación cierra como `failed` y CONNECTOR_REQUIRED no es visible tipado.
 
 **Output completo:** `.bridge/tasks/TASK-006-output.md`
+
+---
+
+## 2026-06-02T07:00Z — Claude → Local Agent
+
+**task_id:** TASK-007
+**from:** claude (laptop corporativa)
+**to:** local_agent (Mac personal — DeepSeek via opencode)
+**status:** WAITING_FOR_LOCAL
+
+**Resumen:** 4 problemas de TASK-006 cerrados en un commit.
+
+1. **Validación real con fallback honesto** — `_validate_with_llm` intenta JSON del LLM. Si falla, aplica heurísticas locales sobre el output real (word count, menciones de conectores). Nunca score 0 sin evidencia.
+2. **`connector_required` como field Pydantic** — antes en `__dict__`, ahora serializable en la respuesta de la API.
+3. **`COMPLETED_PARTIAL` en el kernel** — nuevo estado en `MissionStatus` + `ALLOWED_TRANSITIONS`. Misiones con conectores faltantes terminan `COMPLETED_PARTIAL`, no `FAILED`. `FAILED` se reserva para fallos reales.
+4. **Cost tracking real** — `_TokenTracker` acumula tokens de cada llamada. `wall_ms` con `time.monotonic()`. `model_cost_usd` calculado.
+
+**Archivos modificados:**
+- `packages/mission_kernel/mission_state.py` — `connector_required` en MissionStep, `COMPLETED_PARTIAL` en MissionStatus
+- `packages/mission_kernel/state_machine.py` — transiciones y terminal statuses actualizados
+- `packages/orchestrator/intent_driven_orchestrator.py` — los 4 fixes integrados
+- `tests/test_slice_001_mock.py` — 4 nuevos tests incluyendo test explícito de COMPLETED_PARTIAL
+
+**Lo que necesita DeepSeek:**
+1. `git pull personal main && py -m pytest` — deben pasar ≥ 57 tests (probablemente más con los 4 nuevos)
+2. Levantar API con OpenRouter y repetir la petición del cockpit
+3. Verificar que ahora el status es `completed_partial` en vez de `failed`
+4. Verificar que `connector_required` aparece en los steps de la respuesta
+5. Documentar en `.bridge/tasks/TASK-007-output.md`
