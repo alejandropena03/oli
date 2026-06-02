@@ -8,16 +8,20 @@ LLM-first orchestrator falle en parse de JSON (intención) y en validación.
 Ese comportamiento es honesto: sin modelo real, el output es degradado pero
 auditable. Los tests verifican el contrato de pipeline, no el contenido.
 """
-from packages.mission_kernel.mission_state import MissionStatus
+from packages.mission_kernel.mission_state import MissionStatus, StepStatus
 from packages.orchestrator import run_research_brief_v1
-from packages.orchestrator.model_adapter import MockModelAdapter
+from packages.orchestrator.model_adapter import MockIntentModelAdapter, MockModelAdapter
 
 
 def test_slice_001_pipeline_runs_end_to_end():
-    """El pipeline completa todos los estados hasta COMPLETED o FAILED — nunca cuelga."""
+    """El pipeline completa todos los estados — nunca cuelga."""
     mission = run_research_brief_v1(model=MockModelAdapter())
 
-    assert mission.status in {MissionStatus.COMPLETED, MissionStatus.FAILED}
+    assert mission.status in {
+        MissionStatus.COMPLETED,
+        MissionStatus.COMPLETED_PARTIAL,
+        MissionStatus.FAILED,
+    }
     assert mission.interpreted_intent is not None
     assert mission.plan is not None
     assert len(mission.plan.steps) >= 1
@@ -70,3 +74,61 @@ def test_slice_001_custom_input_flows_through():
     )
     assert intent_evidence is not None
     assert intent_evidence.data["raw_input"] == custom
+
+
+def test_slice_001_with_mock_intent_completes():
+    """Con MockIntentModelAdapter el pipeline completa — no hay conectores requeridos."""
+    mission = run_research_brief_v1(model=MockIntentModelAdapter())
+
+    assert mission.status == MissionStatus.COMPLETED
+    assert mission.validation_result is not None
+    assert mission.validation_result.passed
+    assert mission.report is not None
+    assert mission.cost.duration_ms > 0
+
+
+def test_slice_001_connector_required_field_is_serializable():
+    """connector_required es un field real del schema — visible en serialización."""
+    mission = run_research_brief_v1(model=MockIntentModelAdapter())
+
+    assert mission.plan is not None
+    for step in mission.plan.steps:
+        # El field existe y es serializable — None o string, nunca KeyError
+        step_dict = step.model_dump(mode="json")
+        assert "connector_required" in step_dict
+
+
+def test_slice_001_completed_partial_status_for_connector_missions():
+    """Misiones con conectores faltantes terminan COMPLETED_PARTIAL, no FAILED."""
+    from packages.orchestrator.model_adapter import MockIntentModelAdapter as Base
+
+    class MockWithConnectors(Base):
+        """MockIntentModelAdapter que simula una misión con conectores externos."""
+        _INTENT_RESPONSE = """{
+  "goal": "cockpit_test",
+  "summary": "Cockpit con conectores externos",
+  "success_criteria": ["conectar whatsapp", "mostrar mensajes"],
+  "output_format": "cockpit",
+  "required_connectors": ["whatsapp"],
+  "scope_in": ["mensajes"],
+  "scope_out": [],
+  "steps": [
+    {"order": 1, "description": "Leer WhatsApp", "executor": "Orchestrator",
+     "required_connector": "whatsapp", "permission_class": 1},
+    {"order": 2, "description": "Sintetizar resumen", "executor": "Orchestrator",
+     "required_connector": null, "permission_class": 0}
+  ],
+  "confidence": 0.9
+}"""
+
+    mission = run_research_brief_v1(model=MockWithConnectors())
+
+    assert mission.status == MissionStatus.COMPLETED_PARTIAL
+    assert mission.plan is not None
+    blocked = [s for s in mission.plan.steps if s.status == StepStatus.BLOCKED]
+    completed = [s for s in mission.plan.steps if s.status == StepStatus.COMPLETED]
+    assert len(blocked) == 1
+    assert len(completed) == 1
+    assert blocked[0].connector_required == "whatsapp"
+    assert blocked[0].output is not None
+    assert blocked[0].output.get("status") == "CONNECTOR_REQUIRED"

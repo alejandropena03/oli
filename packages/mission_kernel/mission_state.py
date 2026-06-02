@@ -37,6 +37,7 @@ class MissionStatus(StrEnum):
     GENERATING_REPORT = "generating_report"
     UPDATING_MEMORY = "updating_memory"
     COMPLETED = "completed"
+    COMPLETED_PARTIAL = "completed_partial"  # ejecutada con conectores faltantes — no es un fallo
     BLOCKED = "blocked"
     FAILED = "failed"
     CANCELLED = "cancelled"
@@ -90,6 +91,7 @@ class MissionStep(BaseModel):
     description: str
     executor: str
     required_tools: list[str] = Field(default_factory=list)
+    connector_required: str | None = None  # nombre del conector externo si el paso lo necesita
     permission_class: PermissionClass = PermissionClass.READ_DRAFT
     reversible: bool = True
     estimated_duration_ms: int = Field(default=1000, gt=0)

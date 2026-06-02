@@ -9,6 +9,7 @@ class InvalidTransition(ValueError):
 
 TERMINAL_STATUSES = {
     MissionStatus.COMPLETED,
+    MissionStatus.COMPLETED_PARTIAL,
     MissionStatus.FAILED,
     MissionStatus.CANCELLED,
     MissionStatus.ARCHIVED,
@@ -64,8 +65,9 @@ ALLOWED_TRANSITIONS: dict[MissionStatus, set[MissionStatus]] = {
     },
     MissionStatus.DELIVERING: {MissionStatus.GENERATING_REPORT},
     MissionStatus.GENERATING_REPORT: {MissionStatus.UPDATING_MEMORY},
-    MissionStatus.UPDATING_MEMORY: {MissionStatus.COMPLETED},
+    MissionStatus.UPDATING_MEMORY: {MissionStatus.COMPLETED, MissionStatus.COMPLETED_PARTIAL},
     MissionStatus.COMPLETED: {MissionStatus.ARCHIVED},
+    MissionStatus.COMPLETED_PARTIAL: {MissionStatus.ARCHIVED},
     MissionStatus.BLOCKED: {MissionStatus.EXECUTING, MissionStatus.CANCELLED},
     MissionStatus.FAILED: {MissionStatus.ARCHIVED},
     MissionStatus.CANCELLED: {MissionStatus.ARCHIVED},
@@ -121,7 +123,7 @@ def transition(
 
     if target_status == MissionStatus.EXECUTING and mission.started_at is None:
         mission.started_at = now_utc()
-    if target_status == MissionStatus.COMPLETED:
+    if target_status in {MissionStatus.COMPLETED, MissionStatus.COMPLETED_PARTIAL}:
         mission.completed_at = now_utc()
     if target_status == MissionStatus.ARCHIVED:
         mission.archived_at = now_utc()
