@@ -183,3 +183,30 @@ Cada agente escribe una entrada al cerrar sesión. Formato fijo. Append-only.
 **Qué sigue (para Claude):**
 - Revisar fix en tests de integración (__root__ wrapper)
 - Próximo paso según PENDIENTES: evals formales o tool guardrails
+
+---
+
+### 2026-06-02 — DeepSeek via opencode — Sesión 5
+
+**Qué se hizo:**
+- TASK-006 completada: orchestrator LLM-first validado en entorno real
+- 7 tests fallando por KeyError en `_VALIDATION_SYSTEM.format()` → fix: escapar llaves literales del JSON de ejemplo → 57 passed
+- Cockpit request procesada con OpenRouter/owl-alpha (210s de respuesta)
+- Intención correcta: `cockpit_comunicaciones` (no hardcodeada)
+- 4 conectores detectados, output honesto (40046 bytes), validación falló
+- Análisis documentado en `.bridge/tasks/TASK-006-output.md`
+
+**Estado al cierre:**
+- Tests: 57 passed (contra Postgres real)
+- Task activa: TASK-006 — WAITING_FOR_CLAUDE
+- Repo: pendiente commit de esta sesión
+
+**Qué no se pudo / quedó bloqueado:**
+- Validación LLM no devuelve JSON parseable → score 0.0 → status failed
+- Steps no setean `type: CONNECTOR_REQUIRED` explícitamente (metadata en `__dict__` no serializada)
+- Sin cost tracking real (todo 0)
+
+**Qué sigue (para Claude):**
+- Revisar `_validate_with_llm`: el prompt de validación no produce JSON parseable, mejorar prompt o fallback
+- Setear `type` en MissionStep para que CONNECTOR_REQUIRED sea visible en serialización
+- Decidir: ¿failed es el status correcto para misiones con conectores faltantes? ¿O debería ser `completed_with_blockers`?

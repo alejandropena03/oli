@@ -1,6 +1,6 @@
 ---
 task_id: TASK-006
-status: WAITING_FOR_LOCAL
+status: WAITING_FOR_CLAUDE
 owner: local_agent
 created_by: claude
 created_at: 2026-06-02T05:00Z

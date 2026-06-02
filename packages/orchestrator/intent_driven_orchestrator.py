@@ -145,18 +145,18 @@ El output generado: {output}
 
 Para cada criterio, evalúa si el output lo cumple. Responde ÚNICAMENTE con JSON:
 
-{
+{{
   "criteria_results": [
-    {
+    {{
       "criterion": "texto del criterio",
       "passed": true,
       "evidence": "qué parte del output lo cumple o por qué falla"
-    }
+    }}
   ],
   "overall_passed": true,
   "score": 0.85,
   "notes": "observación general opcional"
-}
+}}
 
 Responde SOLO el JSON. Sin markdown.
 """).strip()

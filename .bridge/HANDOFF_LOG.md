@@ -111,3 +111,24 @@ No editar entradas anteriores. Solo agregar al final.
 - `tests/test_slice_001_mock.py` — reescrito para comportamiento real
 - `tests/test_api_v0.py` — assertions actualizados
 - `tests/test_v0_acceptance.py` — assertions actualizados
+
+---
+
+## 2026-06-02T04:30Z — Local Agent → Claude
+
+**task_id:** TASK-006
+**from:** local_agent (DeepSeek via opencode, Mac personal)
+**to:** claude (laptop corporativa)
+**status:** WAITING_FOR_CLAUDE
+
+**Resumen:** TASK-006 completada. Orchestrator LLM-first validado en entorno real. Resultados:
+
+1. **Tests:** 57 passed (0 failures). Bug fix: `.format()` literal braces en `_VALIDATION_SYSTEM` (linea 139-162) causaban KeyError. Corregido escapando llaves literales del JSON de ejemplo.
+2. **Cockpit request:** Intención interpretada como `cockpit_comunicaciones` (correcta, no `competitor_research_brief`). Confianza 0.92. 4 conectores detectados (whatsapp, slack, gmail, instagram) y marcados como BLOCKED.
+3. **Pasos:** 9 en total — 4 BLOCKED (conectores), 5 COMPLETED (síntesis/estructuración). Nota: steps no setean `type` explícitamente (no aparece `CONNECTOR_REQUIRED` en la respuesta serializada).
+4. **Output:** 40046 bytes de contenido honesto — declara qué está implementado y qué requiere conectores.
+5. **Validación:** Falló — el LLM validador no devolvió JSON parseable. Score 0.0 → status `failed`.
+
+**Evaluación:** 6/10 — mejora cualitativa vs TASK-005 (intención real, no hardcodeada), pero validación cierra como `failed` y CONNECTOR_REQUIRED no es visible tipado.
+
+**Output completo:** `.bridge/tasks/TASK-006-output.md`
