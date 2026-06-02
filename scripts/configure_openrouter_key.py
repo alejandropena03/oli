@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-import tkinter as tk
-from tkinter import messagebox
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -37,6 +35,9 @@ def sanitize_api_key(api_key: str) -> str:
 
 
 def main() -> None:
+    import tkinter as tk
+    from tkinter import messagebox
+
     root = tk.Tk()
     root.title("Configurar OpenRouter para Oli")
     root.geometry("560x220")

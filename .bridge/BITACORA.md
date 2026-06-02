@@ -52,3 +52,30 @@ Cada agente escribe una entrada al cerrar sesión. Formato fijo. Append-only.
 - git pull
 - Ejecutar TASK-002: Docker + Postgres 18 + pytest + health check
 - Agregar .opencode/ al .gitignore antes del push
+
+---
+
+### 2026-06-01 — DeepSeek via opencode — Sesión 1
+
+**Qué se hizo:**
+- TASK-002 completada: entorno Mac personal validado
+- Postgres 18 levantado con Docker Desktop en Mac
+- `.env.local` configurado con OLI_MISSION_STORE=sqlalchemy + OLI_DATABASE_URL
+- Python 3.12.13 via pyenv + dependencias instaladas
+- `.opencode/` agregado a `.gitignore`
+- `python -m pytest`: 45/45 passed contra Postgres real
+- API levantada en localhost:8000 → health OK
+- Fix: tkinter import movido a lazy en `scripts/configure_openrouter_key.py`
+
+**Estado al cierre:**
+- Tests: 45 passed (contra Postgres real via SQLAlchemy)
+- Task activa: TASK-002 — WAITING_FOR_CLAUDE (Claude)
+- Repo: pendiente commit de DeepSeek
+
+**Qué no se pudo / quedó bloqueado:**
+- Nada. Todo completado.
+
+**Qué sigue (para Claude):**
+- git pull
+- Conectar PostgresSaver de LangGraph a Postgres real
+- Probar checkpoint/resume con PostgresSaver

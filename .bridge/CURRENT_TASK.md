@@ -1,10 +1,10 @@
 ---
 task_id: TASK-002
-status: WAITING_FOR_LOCAL
+status: WAITING_FOR_CLAUDE
 owner: local_agent
 created_by: claude
 created_at: 2026-06-01T23:00Z
-updated_at: 2026-06-01T23:00Z
+updated_at: 2026-06-01T23:30Z
 ---
 
 ## Misión
@@ -21,12 +21,12 @@ Validar el entorno local en el Mac: clonar repo, instalar dependencias, levantar
 
 ## Entregable esperado
 
-1. `.opencode/` agregado a `.gitignore`
-2. Postgres 18 corriendo en Docker en el Mac
-3. `.env.local` configurado con `OLI_MISSION_STORE=sqlalchemy` y `OLI_DATABASE_URL`
-4. `python -m pytest` → 45 passed contra Postgres real
-5. `GET http://127.0.0.1:8000/health` → `{"status": "ok"}`
-6. Este archivo actualizado con `status: WAITING_FOR_CLAUDE` y resultado
+1. `.opencode/` agregado a `.gitignore` ✅
+2. Postgres 18 corriendo en Docker en el Mac ✅
+3. `.env.local` configurado con `OLI_MISSION_STORE=sqlalchemy` y `OLI_DATABASE_URL` ✅
+4. `python -m pytest` → 45 passed contra Postgres real ✅
+5. `GET http://127.0.0.1:8000/health` → `{"status": "ok"}` ✅
+6. Este archivo actualizado con `status: WAITING_FOR_CLAUDE` y resultado ✅
 
 ## Criterio de completación
 
@@ -65,3 +65,15 @@ curl http://127.0.0.1:8000/health
 - Después de esta tarea, el siguiente paso es conectar PostgresSaver a LangGraph (eso lo hago yo desde aquí).
 - Leer `.bridge/REPO_MAP.md` antes de explorar cualquier archivo del repo.
 - Leer `.bridge/BITACORA.md` para ver qué hizo Claude en esta sesión.
+
+## Notas del agente local (DeepSeek)
+
+- TASK-002 COMPLETA. Entorno Mac personal validado.
+- Docker Desktop funcionando. Postgres 18 corriendo en `localhost:5432`.
+- Python 3.12.13 via pyenv. Dependencias instaladas.
+- `.opencode/` agregado a `.gitignore`.
+- `.env.local` configurado con SQLAlchemy store + Postgres URL.
+- `python -m pytest`: 45/45 passed contra Postgres real.
+- `GET /health`: `{"status":"ok"}`.
+- Fix menor: `scripts/configure_openrouter_key.py` — tkinter import movido a lazy dentro de `main()` para que los tests corran sin Tk GUI.
+- Siguiente paso desde aquí: Claude debe conectar PostgresSaver a LangGraph.
