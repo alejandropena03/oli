@@ -1,10 +1,10 @@
 ---
 task_id: TASK-004
-status: WAITING_FOR_LOCAL
+status: WAITING_FOR_CLAUDE
 owner: local_agent
 created_by: claude
 created_at: 2026-06-02T01:00Z
-updated_at: 2026-06-02T01:00Z
+updated_at: 2026-06-02T01:30Z
 ---
 
 ## Misión
@@ -81,6 +81,15 @@ Escribe el análisis en `.bridge/tasks/TASK-004-analysis.md`.
 1. Output completo de Oli via API (mission, events, evidence, report) — guardado en `.bridge/tasks/TASK-004-oli-output.md`
 2. Análisis comparativo honesto en `.bridge/tasks/TASK-004-analysis.md`
 3. Este archivo actualizado con `status: WAITING_FOR_CLAUDE`
+
+## Notas del agente local (DeepSeek)
+
+- ✅ API respondió correctamente en `localhost:8000`
+- ✅ Misión completada en pipeline real con 11 estados
+- ✅ Output guardado en `.bridge/tasks/TASK-004-oli-output.md`
+- ✅ Análisis comparativo en `.bridge/tasks/TASK-004-analysis.md`
+- DesarrolloAdapter genera contenido mock — pipeline real, datos de prueba
+- Para contenido real se necesita configurar OpenRouter en `.env.local`
 
 ## Notas del agente anterior (Claude)
 
