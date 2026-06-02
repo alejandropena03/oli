@@ -79,3 +79,29 @@ Cada agente escribe una entrada al cerrar sesión. Formato fijo. Append-only.
 - git pull
 - Conectar PostgresSaver de LangGraph a Postgres real
 - Probar checkpoint/resume con PostgresSaver
+
+---
+
+### 2026-06-01 — Claude Code — Sesión 2
+
+**Qué se hizo:**
+- Implementado `packages/orchestrator/checkpointer.py`: factory que devuelve PostgresSaver (Postgres disponible) o MemorySaver (dev). Lazy import — no falla sin el paquete.
+- Refactorizado `packages/orchestrator/mission_graph.py`: topología separada del checkpointer, `build_weekly_report_graph()` usa el factory automáticamente.
+- Creado `tests/test_postgres_checkpointer.py`: 6 unit tests (siempre corren) + 4 integration tests (se activan con Postgres en env). Tests cubren: factory logic, URL conversion, checkpoint/resume, thread isolation.
+- Suite local: 51 passed, 4 skipped (integration tests esperan Mac con Postgres).
+- Actualizado bridge: PENDIENTES.md, CURRENT_TASK.md (TASK-003), HANDOFF_LOG.md, BITACORA.md.
+
+**Estado al cierre:**
+- Tests: 51 passed, 4 skipped (aquí) — 55 passed esperados en Mac con Postgres
+- Task activa: TASK-003 — WAITING_FOR_LOCAL (DeepSeek)
+- Repo: pendiente commit de esta sesión
+
+**Qué no se pudo / quedó bloqueado:**
+- Correr integration tests: requieren `langgraph-checkpoint-postgres` y `psycopg[binary]` — solo en Mac con Postgres.
+
+**Qué sigue (para DeepSeek):**
+- git pull
+- pip install langgraph-checkpoint-postgres "psycopg[binary]"
+- python -m pytest tests/test_postgres_checkpointer.py -v → 10 passed
+- python -m pytest → suite completa verde
+- Agregar deps a pyproject.toml y hacer push

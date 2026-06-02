@@ -7,10 +7,11 @@ Marcar completados con `- [x]`. No borrar items completados.
 
 ## Técnicos — V0 → V1
 
-- [ ] Conectar Postgres 18 real con Docker en Mac — @local_agent — URGENTE
-- [ ] Conectar PostgresSaver de LangGraph (checkpointing real) — @claude — después de Postgres
-- [ ] Correr 45 tests contra Postgres real (no solo MemorySaver) — @local_agent — después de Postgres
-- [ ] Crear evals formales para las 3 mission classes — @claude — pendiente Postgres
+- [x] Conectar Postgres 18 real con Docker en Mac — @local_agent — DONE 2026-06-01
+- [x] Conectar PostgresSaver de LangGraph (checkpointing real) — @claude — DONE 2026-06-01
+- [ ] Correr 4 integration tests de PostgresSaver contra Postgres real — @local_agent — URGENTE
+- [ ] Instalar `langgraph-checkpoint-postgres` y `psycopg[binary]` en Mac — @local_agent — URGENTE
+- [ ] Crear evals formales para las 3 mission classes — @claude — pendiente validación Postgres
 - [ ] Agregar tool guardrails reales antes de conectar herramientas externas — @claude — pendiente evals
 - [ ] ADR-024: Model Intelligence (decidido, no escrito) — @claude — media
 - [ ] ADR-026: Terminal/SSH Security (decidido, no escrito) — @claude — media
@@ -18,9 +19,9 @@ Marcar completados con `- [x]`. No borrar items completados.
 
 ## Infraestructura — Bridge
 
-- [ ] Agregar `.opencode/` al `.gitignore` — @local_agent — URGENTE
+- [x] Agregar `.opencode/` al `.gitignore` — @local_agent — DONE 2026-06-01
+- [x] Probar flujo completo del bridge: tarea de Claude → ejecución Mac → validación — @ambos — DONE 2026-06-01
 - [ ] Documentar conectores y tools disponibles en Mac — @local_agent — media
-- [ ] Probar flujo completo del bridge: tarea de Claude → ejecución Mac → validación — @ambos — media
 
 ## Estrategia — Pendientes de Codex
 

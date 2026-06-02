@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, StateGraph
 
 from packages.mission_kernel.mission_state import Mission, MissionSource
 from packages.mission_kernel.state_machine import create_mission
+from packages.orchestrator.checkpointer import get_checkpointer
 from packages.orchestrator.model_adapter import ModelAdapter
 from packages.orchestrator.nodes import (
     MissionGraphState,
@@ -31,7 +31,8 @@ from packages.orchestrator.weekly_client_report import (
 )
 
 
-def build_weekly_report_graph(*, use_memory_checkpointer: bool = True):
+def _build_graph_topology() -> StateGraph:
+    """Build the mission graph topology (nodes + edges) without a checkpointer."""
     builder = StateGraph(MissionGraphState)
     builder.add_node("interpret_intent", interpret_intent_node)
     builder.add_node("retrieve_context", retrieve_context_node)
@@ -79,7 +80,19 @@ def build_weekly_report_graph(*, use_memory_checkpointer: bool = True):
     builder.add_edge("deliver", "generate_report")
     builder.add_edge("generate_report", "update_memory")
     builder.add_edge("update_memory", END)
-    checkpointer = MemorySaver() if use_memory_checkpointer else None
+    return builder
+
+
+def build_weekly_report_graph(*, use_memory_checkpointer: bool = True):
+    """Compile the weekly report graph.
+
+    - use_memory_checkpointer=True (default): uses MemorySaver for dev/test.
+    - use_memory_checkpointer=False: no checkpointer (stateless, for testing topology).
+    - When OLI_MISSION_STORE=sqlalchemy and OLI_DATABASE_URL points to Postgres,
+      get_checkpointer() returns PostgresSaver automatically.
+    """
+    builder = _build_graph_topology()
+    checkpointer = get_checkpointer() if use_memory_checkpointer else None
     return builder.compile(checkpointer=checkpointer)
 
 
@@ -90,7 +103,7 @@ def run_weekly_client_report_graph_v1(
 ) -> Mission:
     mission = create_mission(raw_input=raw_input, source=MissionSource.CHAT)
     graph = build_weekly_report_graph(use_memory_checkpointer=model is None)
-    initial_state = {
+    initial_state: dict[str, Any] = {
         "mission": mission,
         "performance_data": performance_data or DEFAULT_WEEKLY_REPORT_DATA,
     }

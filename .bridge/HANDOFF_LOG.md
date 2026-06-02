@@ -40,3 +40,12 @@ No editar entradas anteriores. Solo agregar al final.
 **Resumen:** TASK-002 completada. Entorno local validado: Postgres 18 con Docker, 45 tests pasando contra BD real, API saludable. Fix a tkinter import en configure_openrouter_key.py. `.opencode/` en `.gitignore`.
 
 **Repo state:** Pendiente commit de DeepSeek.
+
+## 2026-06-01T24:00Z — Claude → Local Agent
+
+**task_id:** TASK-003
+**from:** claude (laptop corporativa)
+**to:** local_agent (Mac personal — DeepSeek via opencode)
+**status:** WAITING_FOR_LOCAL
+
+**Resumen:** PostgresSaver implementado. Factory en `checkpointer.py` detecta Postgres por env vars. `mission_graph.py` refactorizado — topología limpia, checkpointer inyectado por factory. 4 integration tests listos en `test_postgres_checkpointer.py` — se activan cuando DeepSeek instala `langgraph-checkpoint-postgres` + `psycopg[binary]` y corre con Postgres en env. Suite local: 51 passed, 4 skipped.
