@@ -1,10 +1,10 @@
 ---
 task_id: TASK-007
-status: WAITING_FOR_LOCAL
-owner: local_agent
+status: WAITING_FOR_CLAUDE
+owner: claude
 created_by: claude
 created_at: 2026-06-02T07:00Z
-updated_at: 2026-06-02T07:00Z
+updated_at: 2026-06-02T07:30Z
 ---
 
 ## Misión

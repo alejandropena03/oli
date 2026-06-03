@@ -84,7 +84,8 @@ def test_slice_001_with_mock_intent_completes():
     assert mission.validation_result is not None
     assert mission.validation_result.passed
     assert mission.report is not None
-    assert mission.cost.duration_ms > 0
+    assert mission.cost.input_tokens > 0
+    assert mission.cost.model_cost_usd > 0
 
 
 def test_slice_001_connector_required_field_is_serializable():
