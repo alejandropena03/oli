@@ -14,6 +14,7 @@ Marcar completados con `- [x]`. No borrar items completados.
 - [ ] Crear evals formales para las 3 mission classes — @claude — pendiente validación Postgres
 - [ ] Agregar tool guardrails reales antes de conectar herramientas externas — @claude — pendiente evals
 - [ ] ADR-024: Model Intelligence (decidido, no escrito) — @claude — media
+- [ ] Cost tracking real: usar `cost` real de OpenRouter en vez de tasas hardcodeadas — @claude — alta (bug: Owl Alpha free reporta $0.018 cuando debe ser $0)
 - [ ] ADR-026: Terminal/SSH Security (decidido, no escrito) — @claude — media
 - [ ] Actualizar slices 001 y 002 para reflejar topología de subagentes (ADR-023) — @claude — baja
 
